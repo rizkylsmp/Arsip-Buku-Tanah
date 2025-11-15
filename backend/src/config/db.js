@@ -1,6 +1,12 @@
 import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
-dotenv.config();
+
+// Load environment variables based on NODE_ENV
+const envFile = process.env.NODE_ENV === 'production' 
+  ? '.env.production' 
+  : '.env.development';
+
+dotenv.config({ path: envFile });
 
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
