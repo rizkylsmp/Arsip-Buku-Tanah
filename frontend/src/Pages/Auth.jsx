@@ -15,6 +15,8 @@ const Auth = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   React.useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -23,7 +25,7 @@ const Auth = () => {
       if (!profile) {
         (async () => {
           try {
-            const res = await fetch("http://localhost:4000/me", {
+            const res = await fetch(`${API_URL}/me`, {
               headers: { Authorization: `Bearer ${token}` },
             });
             if (res.ok) {
@@ -64,7 +66,7 @@ const Auth = () => {
       }
 
       try {
-        const res = await fetch("http://localhost:4000/register", {
+        const res = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ nama, username, password }),
@@ -91,7 +93,7 @@ const Auth = () => {
     } else {
       // login flow
       try {
-        const res = await fetch("http://localhost:4000/login", {
+        const res = await fetch(`${API_URL}/login`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password }),
@@ -111,7 +113,11 @@ const Auth = () => {
           const from = location.state?.from || "/";
           navigate(from, { replace: true });
         } else {
-          setErrors({ server: data.error || data.message || "Login failed." });
+          // Show user-friendly error message for login failure
+          const errorMessage =
+            "Username/Password salah. Tidak punya akun? Silahkan registrasi dahulu";
+          setErrors({ server: errorMessage });
+          alert(errorMessage);
         }
       } catch (error) {
         setErrors({
