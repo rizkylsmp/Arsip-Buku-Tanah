@@ -7,7 +7,7 @@ import {
   createBuku,
   updateBuku,
   deleteBuku,
-} from "../controllers/bukuTanahController.js";
+} from "../controllers/BukuTanahController.js";
 import { authenticate } from "../middlewares/auth.js";
 
 const router = express.Router();
