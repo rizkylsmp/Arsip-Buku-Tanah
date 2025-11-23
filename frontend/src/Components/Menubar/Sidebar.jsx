@@ -88,7 +88,7 @@ const Sidebar = () => {
         {/* Toggle Button */}
         <div className="flex items-center justify-between relative z-10">
           {isOpen && (
-            <div className="font-bold text-xl md:text-2xl h-16 md:h-24 flex items-center justify-center flex-1 px-4">
+            <div className="font-bold h-16 md:h-24 flex items-center justify-center flex-1 px-4 my-6">
               <img src="/bpn.png" alt="Logo" className="w-fit h-fit p-10" />
             </div>
           )}
@@ -122,11 +122,13 @@ const Sidebar = () => {
               } ${!isOpen ? "md:justify-center py-1" : "py-2"}`}
               title={!isOpen ? item.name : ""}
             >
-              <span className="flex-shrink-0 text-xl group-hover:scale-110 transition-transform">
+              <span className="flex-shrink-0 group-hover:scale-110 transition-transform">
                 {item.icon}
               </span>
               <span
-                className={`whitespace-nowrap ${!isOpen ? "md:hidden" : ""}`}
+                className={`whitespace-nowrap ${
+                  !isOpen ? "md:hidden" : "md:text-md text-sm"
+                }`}
               >
                 {item.name}
               </span>

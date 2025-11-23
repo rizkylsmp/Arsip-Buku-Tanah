@@ -74,3 +74,36 @@
 .animation-delay-4000 {
   animation-delay: 4s;
 }
+
+/* Custom Scrollbar for Table */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #e5e7eb;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+.scrollbar-track-gray-200::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+
+.scrollbar-thumb-blue-500::-webkit-scrollbar-thumb {
+  background: #3b82f6;
+}

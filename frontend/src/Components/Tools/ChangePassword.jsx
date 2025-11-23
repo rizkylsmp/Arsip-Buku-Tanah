@@ -1,6 +1,6 @@
 import React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const ChangePassword = ({
   open,
@@ -9,25 +9,27 @@ const ChangePassword = ({
   title = "Ubah Password",
 }) => {
   const [formData, setFormData] = React.useState({
-    oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+  const [errorDialogOpen, setErrorDialogOpen] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.newPassword !== formData.confirmPassword) {
-      alert("Password baru dan konfirmasi password tidak cocok!");
+      setErrorMessage("Password baru dan konfirmasi password tidak cocok!");
+      setErrorDialogOpen(true);
       return;
     }
     if (formData.newPassword.length < 6) {
-      alert("Password baru minimal 6 karakter!");
+      setErrorMessage("Password baru minimal 6 karakter!");
+      setErrorDialogOpen(true);
       return;
     }
     onSubmit(formData);
     // Reset form
     setFormData({
-      oldPassword: "",
       newPassword: "",
       confirmPassword: "",
     });
@@ -36,7 +38,6 @@ const ChangePassword = ({
   const handleClose = (isOpen) => {
     if (!isOpen) {
       setFormData({
-        oldPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
@@ -45,108 +46,129 @@ const ChangePassword = ({
   };
 
   return (
-    <Dialog.Root open={open} onOpenChange={handleClose}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-dark/50 data-[state=open]:animate-overlayShow" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 max-h-[85vh] w-[90vw] max-w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-md bg-white p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none data-[state=open]:animate-contentShow">
-          <Dialog.Title className="m-0 text-[17px] font-medium text-mauve12">
-            {title}
-          </Dialog.Title>
-          <Dialog.Description className="mb-5 mt-2.5 text-[15px] leading-normal text-mauve11">
-            Masukkan password lama dan password baru untuk mengubah password.
-          </Dialog.Description>
+    <>
+      <Dialog.Root open={open} onOpenChange={handleClose}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm data-[state=open]:animate-overlayShow z-[100]" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-2xl w-[90vw] max-w-md z-[101] data-[state=open]:animate-contentShow">
+            <Dialog.Title className="text-xl font-bold text-gray-900 mb-2">
+              {title}
+            </Dialog.Title>
+            <Dialog.Description className="text-sm text-gray-600 mb-6">
+              Masukkan password baru untuk mengubah password petugas.
+            </Dialog.Description>
 
-          <form onSubmit={handleSubmit} className="w-full">
-            <div className="mb-3 grid flex-col gap-4">
-              {/* Password Lama */}
-              <div className="flex gap-5">
-                <div className="w-2/5">
-                  <label className="text-md">Password Lama</label>
+            <form onSubmit={handleSubmit} className="w-full">
+              <div className="mb-4 grid flex-col gap-4">
+                {/* Password Baru */}
+                <div className="flex flex-col md:flex-row gap-2 md:gap-5">
+                  <div className="w-full md:w-1/3">
+                    <label className="text-sm font-semibold text-gray-700">
+                      Password Baru
+                    </label>
+                  </div>
+                  <div className="w-full md:w-2/3">
+                    <input
+                      type="password"
+                      className="box-border inline-flex w-full appearance-none rounded-lg px-3 py-2 text-sm leading-none border-2 border-slate-200 outline-none bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-slate-300 transition-all shadow-sm"
+                      required
+                      placeholder="Masukkan password baru"
+                      autoComplete="new-password"
+                      value={formData.newPassword}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          newPassword: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
-                <div className="w-3/5">
-                  <input
-                    type="password"
-                    className="box-border inline-flex h-8 w-full appearance-none rounded px-2.5 text-sm leading-none shadow-[0_0_0_1px] shadow-abu outline-none selection:bg-blackA6 selection:text-black hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black]"
-                    required
-                    placeholder="Masukkan password lama"
-                    autoComplete="current-password"
-                    value={formData.oldPassword}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        oldPassword: e.target.value,
-                      }))
-                    }
-                  />
+
+                {/* Konfirmasi Password Baru */}
+                <div className="flex flex-col md:flex-row gap-2 md:gap-5">
+                  <div className="w-full md:w-1/3">
+                    <label className="text-sm font-semibold text-gray-700">
+                      Konfirmasi Password
+                    </label>
+                  </div>
+                  <div className="w-full md:w-2/3">
+                    <input
+                      type="password"
+                      className="box-border inline-flex w-full appearance-none rounded-lg px-3 py-2 text-sm leading-none border-2 border-slate-200 outline-none bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-slate-300 transition-all shadow-sm"
+                      required
+                      placeholder="Konfirmasi password baru"
+                      autoComplete="new-password"
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData((prev) => ({
+                          ...prev,
+                          confirmPassword: e.target.value,
+                        }))
+                      }
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Password Baru */}
-              <div className="flex gap-5">
-                <div className="w-2/5">
-                  <label className="text-md">Password Baru</label>
-                </div>
-                <div className="w-3/5">
-                  <input
-                    type="password"
-                    className="box-border inline-flex h-8 w-full appearance-none rounded px-2.5 text-sm leading-none shadow-[0_0_0_1px] shadow-abu outline-none selection:bg-blackA6 selection:text-black hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black]"
-                    required
-                    placeholder="Masukkan password baru"
-                    autoComplete="new-password"
-                    value={formData.newPassword}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        newPassword: e.target.value,
-                      }))
-                    }
-                  />
-                </div>
-              </div>
+              <button
+                type="submit"
+                className="mt-6 py-3 w-full text-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold leading-none text-white shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all"
+              >
+                Ubah Password
+              </button>
+            </form>
 
-              {/* Konfirmasi Password Baru */}
-              <div className="flex gap-5">
-                <div className="w-2/5">
-                  <label className="text-md">Konfirmasi Password</label>
-                </div>
-                <div className="w-3/5">
-                  <input
-                    type="password"
-                    className="box-border inline-flex h-8 w-full appearance-none rounded px-2.5 text-sm leading-none shadow-[0_0_0_1px] shadow-abu outline-none selection:bg-blackA6 selection:text-black hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black]"
-                    required
-                    placeholder="Konfirmasi password baru"
-                    autoComplete="new-password"
-                    value={formData.confirmPassword}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        confirmPassword: e.target.value,
-                      }))
-                    }
-                  />
+            <Dialog.Close asChild>
+              <button
+                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
+                aria-label="Close"
+              >
+                <Cross2Icon className="w-4 h-4" />
+              </button>
+            </Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      {/* Error Dialog */}
+      <Dialog.Root open={errorDialogOpen} onOpenChange={setErrorDialogOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm data-[state=open]:animate-overlayShow z-[102]" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-2xl w-[90vw] max-w-md z-[103] data-[state=open]:animate-contentShow">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <Dialog.Title className="text-lg font-bold text-gray-900 mb-2">
+                  Error
+                </Dialog.Title>
+                <Dialog.Description className="text-sm text-gray-600 mb-4">
+                  {errorMessage}
+                </Dialog.Description>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => setErrorDialogOpen(false)}
+                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all shadow-md hover:shadow-lg"
+                  >
+                    OK
+                  </button>
                 </div>
               </div>
             </div>
-
-            <button
-              type="submit"
-              className="mt-5 py-3 w-full text-center rounded bg-biru-terang font-medium leading-none text-white hover:bg-biru"
-            >
-              Ubah Password
-            </button>
-          </form>
-
-          <Dialog.Close asChild>
-            <button
-              className="absolute right-2.5 top-2.5 inline-flex size-[25px] appearance-none items-center justify-center rounded-full text-violet11 hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 focus:outline-none"
-              aria-label="Close"
-            >
-              <Cross2Icon />
-            </button>
-          </Dialog.Close>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+            <Dialog.Close asChild>
+              <button
+                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
+                aria-label="Close"
+              >
+                <Cross2Icon className="w-4 h-4" />
+              </button>
+            </Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </>
   );
 };
 

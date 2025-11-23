@@ -132,22 +132,22 @@ const Table = ({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto relative rounded-xl border-2 border-gray-200 shadow-lg">
+      <div className="overflow-x-auto relative rounded-xl border-2 border-gray-200 shadow-lg scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
         {loading && (
           <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
-            <div className="flex flex-col items-center gap-3">
-              <MoonLoader color="#3b82f6" size={50} />
+            <div className="flex flex-col items-center gap-3 p-10">
+              <MoonLoader color="#3b82f6" size={30} />
               <p className="text-sm font-medium text-gray-600">Loading...</p>
             </div>
           </div>
         )}
-        <table className="min-w-full bg-white">
+        <table className="w-full bg-white">
           <thead>
             <tr className="bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50">
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-3 md:px-6 py-4 border-b-2 border-blue-200"
+                  className="px-6 py-4 border-b-2 border-blue-200 min-w-[180px]"
                 >
                   <div className="flex flex-col justify-between gap-2">
                     <div
@@ -174,7 +174,7 @@ const Table = ({
                 </th>
               ))}
               {(onEdit || onDelete || onChangePassword) && (
-                <th className="px-3 md:px-6 py-4 border-b-2 border-blue-200">
+                <th className="px-6 py-4 border-b-2 border-blue-200 min-w-[150px]">
                   <div className="flex items-center justify-center text-sm md:text-base font-semibold text-gray-700">
                     Aksi
                   </div>
@@ -193,13 +193,13 @@ const Table = ({
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base text-gray-700"
+                    className="px-6 py-4 text-sm md:text-base text-gray-700 min-w-[180px]"
                   >
                     {column.render ? column.render(row) : row[column.key]}
                   </td>
                 ))}
                 {(onEdit || onDelete || onChangePassword) && (
-                  <td className="px-3 md:px-6 py-3 md:py-4">
+                  <td className="px-6 py-4 min-w-[150px]">
                     <div className="flex gap-2 items-center justify-center">
                       {onEdit && (
                         <button

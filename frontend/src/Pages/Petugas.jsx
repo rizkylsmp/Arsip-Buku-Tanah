@@ -176,7 +176,6 @@ const Petugas = () => {
   const handleChangePasswordSubmit = async (passwordData) => {
     try {
       const response = await changePassword(selectedPetugasId, {
-        oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword,
       });
       if (response.status === 200) {

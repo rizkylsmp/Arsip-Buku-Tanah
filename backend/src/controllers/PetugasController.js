@@ -123,22 +123,21 @@ export const deletePetugasController = async (req, res) => {
 export const changePasswordController = async (req, res) => {
   try {
     const id = req.params.id;
-    const { oldPassword, newPassword } = req.body;
+    const { newPassword } = req.body;
 
-    if (!oldPassword || !newPassword) {
+    if (!newPassword) {
+      return res.status(400).json({ error: "Password baru harus diisi" });
+    }
+
+    if (newPassword.length < 6) {
       return res
         .status(400)
-        .json({ error: "Old password and new password are required" });
+        .json({ error: "Password baru minimal 6 karakter" });
     }
 
     const petugas = await Petugas.findByPk(id);
-    if (!petugas) return res.status(404).json({ error: "Petugas not found" });
-
-    // Verify old password
-    const isPasswordValid = await bcrypt.compare(oldPassword, petugas.password);
-    if (!isPasswordValid) {
-      return res.status(400).json({ error: "Password lama tidak sesuai" });
-    }
+    if (!petugas)
+      return res.status(404).json({ error: "Petugas tidak ditemukan" });
 
     // Hash new password
     const hash = await bcrypt.hash(newPassword, 10);
@@ -148,6 +147,6 @@ export const changePasswordController = async (req, res) => {
     return res.json({ message: "Password berhasil diubah" });
   } catch (err) {
     console.error("[petugas][changePassword] error:", err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: "Gagal mengubah password" });
   }
 };

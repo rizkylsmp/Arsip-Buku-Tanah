@@ -13,6 +13,17 @@ export const register = async (req, res) => {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
+    // Check if username already exists
+    const existingUser = await Petugas.findOne({ where: { username } });
+    if (existingUser) {
+      console.warn(
+        `[auth][register] username already exists: username=${username}`
+      );
+      return res.status(400).json({
+        error: `Username "${username}" sudah terdaftar. Silakan gunakan username lain.`,
+      });
+    }
+
     const hash = await bcrypt.hash(password, 10);
     const user = await Petugas.create({
       nama,
@@ -32,7 +43,9 @@ export const register = async (req, res) => {
       .json({ user: { id: user.id_petugas, nama: user.nama } });
   } catch (err) {
     console.error("[auth][register] error registering user:", err);
-    return res.status(400).json({ error: err.message });
+    return res
+      .status(400)
+      .json({ error: "Terjadi kesalahan saat registrasi. Silakan coba lagi." });
   }
 };
 
