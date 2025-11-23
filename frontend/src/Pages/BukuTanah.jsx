@@ -10,6 +10,8 @@ import {
   deleteBukuTanah,
 } from "../api/bukuTanahApi";
 import { Badge } from "@radix-ui/themes";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const BukuTanah = () => {
   const [formData, setFormData] = React.useState({
@@ -25,9 +27,10 @@ const BukuTanah = () => {
   const [isAddOpen, setIsAddOpen] = React.useState(false);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [editingId, setEditingId] = React.useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
+  const [itemToDelete, setItemToDelete] = React.useState(null);
 
   const handleEdit = (row) => {
-    console.log("Edit buku:", row);
     setIsEditMode(true);
     setEditingId(row.id_buku);
     setFormData({
@@ -40,13 +43,21 @@ const BukuTanah = () => {
     setIsAddOpen(true);
   };
 
-  const handleDelete = async (row) => {
-    if (window.confirm(`Hapus buku "${row.kode_buku}"?`)) {
+  const handleDelete = (row) => {
+    setItemToDelete(row);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (itemToDelete) {
       try {
-        await deleteBukuTanah(row.id_buku);
+        await deleteBukuTanah(itemToDelete.id_buku);
         await fetchBukuTanah();
+        setDeleteDialogOpen(false);
+        setItemToDelete(null);
       } catch (error) {
         console.error("Error deleting buku tanah:", error);
+        alert("Gagal menghapus data");
       }
     }
   };
@@ -55,9 +66,10 @@ const BukuTanah = () => {
     try {
       setLoading(true);
       const response = await getBukuTanah();
-      console.log("Response dari API:", response);
-      setBukuTanahList(response.data);
-      console.log("Data yang disimpan di state:", response.data);
+      // API returns full axios response {data: {data: [...]}}
+      if (response.data && response.data.data) {
+        setBukuTanahList(response.data.data);
+      }
     } catch (error) {
       console.error("Error fetching buku tanah:", error);
     } finally {
@@ -94,7 +106,7 @@ const BukuTanah = () => {
           await fetchBukuTanah();
         }
       } else {
-        // Create mode
+        // Create mode - user must input kode_buku manually
         const response = await createBukuTanah({
           kode_buku: formData.kodeBuku,
           nama_pemilik: formData.namaPemilik,
@@ -134,15 +146,14 @@ const BukuTanah = () => {
     <div>
       <Header title="BUKU TANAH" input>
         <Add
-          textButton={isEditMode ? "Edit Buku Tanah" : "Tambah Buku Tanah"}
-          title={isEditMode ? "Edit Buku Tanah" : "Tambah Buku Tanah"}
+          textButton="Tambah Buku Tanah"
+          title="Tambah Buku Tanah"
           open={isAddOpen}
           onOpenChange={(open) => {
             if (!open) {
               setIsEditMode(false);
               setEditingId(null);
               setFormData({
-                kodeBuku: "",
                 namaPemilik: "",
                 kecamatan: "",
                 jenisBuku: "",
@@ -201,6 +212,54 @@ const BukuTanah = () => {
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog.Root open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black/50 backdrop-blur-sm data-[state=open]:animate-overlayShow z-[100]" />
+          <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-2xl w-[90vw] max-w-md z-[101] data-[state=open]:animate-contentShow">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                <ExclamationTriangleIcon className="w-6 h-6 text-red-600" />
+              </div>
+              <div className="flex-1">
+                <Dialog.Title className="text-lg font-bold text-gray-900 mb-2">
+                  Konfirmasi Hapus
+                </Dialog.Title>
+                <Dialog.Description className="text-sm text-gray-600 mb-4">
+                  Apakah Anda yakin ingin menghapus buku tanah dengan kode{" "}
+                  <span className="font-semibold text-gray-900">
+                    "{itemToDelete?.kode_buku}"
+                  </span>
+                  ? Tindakan ini tidak dapat dibatalkan.
+                </Dialog.Description>
+                <div className="flex gap-3 justify-end">
+                  <button
+                    onClick={() => setDeleteDialogOpen(false)}
+                    className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-all"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-all shadow-md hover:shadow-lg"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              </div>
+            </div>
+            <Dialog.Close asChild>
+              <button
+                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
+                aria-label="Close"
+              >
+                <Cross2Icon className="w-4 h-4" />
+              </button>
+            </Dialog.Close>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </div>
   );
 };

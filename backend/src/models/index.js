@@ -5,11 +5,11 @@ import { Peminjaman } from "./Peminjaman.js";
 import { Pengembalian } from "./Pengembalian.js";
 
 // relasi
-Petugas.hasMany(Peminjaman, { foreignKey: "id_petugas" });
-Peminjaman.belongsTo(Petugas, { foreignKey: "id_petugas" });
+Petugas.hasMany(Peminjaman, { foreignKey: "id_petugas", as: "Peminjaman" });
+Peminjaman.belongsTo(Petugas, { foreignKey: "id_petugas", as: "Petugas" });
 
-Petugas.hasMany(Pengembalian, { foreignKey: "id_petugas" });
-Pengembalian.belongsTo(Petugas, { foreignKey: "id_petugas" });
+Petugas.hasMany(Pengembalian, { foreignKey: "id_petugas", as: "Pengembalian" });
+Pengembalian.belongsTo(Petugas, { foreignKey: "id_petugas", as: "Petugas" });
 
 Petugas.hasMany(BukuTanah, {
   foreignKey: "id_petugas",
@@ -23,7 +23,18 @@ BukuTanah.belongsTo(Petugas, {
 BukuTanah.hasMany(Peminjaman, { foreignKey: "id_buku" });
 Peminjaman.belongsTo(BukuTanah, { foreignKey: "id_buku" });
 
-Peminjaman.hasOne(Pengembalian, { foreignKey: "id_pinjam" });
-Pengembalian.belongsTo(Peminjaman, { foreignKey: "id_pinjam" });
+BukuTanah.hasMany(Pengembalian, { foreignKey: "id_buku" });
+Pengembalian.belongsTo(BukuTanah, { foreignKey: "id_buku" });
+
+// Relation between Peminjaman and Pengembalian
+// A peminjaman can have one pengembalian via id_pinjam FK
+Peminjaman.hasOne(Pengembalian, {
+  foreignKey: "id_pinjam",
+  as: "Pengembalian",
+});
+Pengembalian.belongsTo(Peminjaman, {
+  foreignKey: "id_pinjam",
+  as: "Peminjaman",
+});
 
 export { Petugas, BukuTanah, Peminjaman, Pengembalian };

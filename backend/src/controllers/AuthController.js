@@ -73,7 +73,7 @@ export const login = async (req, res) => {
     );
     return res.json({
       token,
-      user: { id: user.id_petugas, nama: user.nama, jabatan: user.jabatan },
+      user: { id: user.id_petugas, nama: user.nama },
     });
   } catch (err) {
     console.error("[auth][login] unexpected error:", err);

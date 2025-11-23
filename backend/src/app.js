@@ -5,6 +5,8 @@ import cors from "cors";
 import AuthRoute from "./routes/AuthRoute.js";
 import BukuTanahRoute from "./routes/BukuTanahRoute.js";
 import PetugasRoute from "./routes/PetugasRoute.js";
+import PeminjamanRoute from "./routes/PeminjamanRoute.js";
+import PengembalianRoute from "./routes/PengembalianRoute.js";
 
 dotenv.config();
 
@@ -45,5 +47,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(AuthRoute);
 app.use(BukuTanahRoute);
 app.use(PetugasRoute);
+app.use(PeminjamanRoute);
+app.use(PengembalianRoute);
 
 export default app;

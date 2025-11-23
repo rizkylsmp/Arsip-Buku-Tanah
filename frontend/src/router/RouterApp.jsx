@@ -6,6 +6,8 @@ import Dashboard from "../Pages/Dashboard";
 import BukuTanah from "../Pages/BukuTanah";
 import ProtectedRoute from "../middleware/ProtectedRoute";
 import Petugas from "../Pages/Petugas";
+import Peminjaman from "../Pages/Peminjaman";
+import Pengembalian from "../Pages/Pengembalian";
 
 export const router = createHashRouter([
   {
@@ -33,6 +35,22 @@ export const router = createHashRouter([
         element: (
           <ProtectedRoute>
             <Petugas />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/peminjaman",
+        element: (
+          <ProtectedRoute>
+            <Peminjaman />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/pengembalian",
+        element: (
+          <ProtectedRoute>
+            <Pengembalian />
           </ProtectedRoute>
         ),
       },

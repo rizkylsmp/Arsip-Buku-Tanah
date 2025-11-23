@@ -1,6 +1,13 @@
-import { BukuTanah, Petugas } from "../models/index.js";
+import {
+  BukuTanah,
+  Petugas,
+  Peminjaman,
+  Pengembalian,
+} from "../models/index.js";
+import { sequelize } from "../config/db.js";
+import { QueryTypes } from "sequelize";
 
-// Get all buku tanah (with optional query params)
+// Get all buku tanah with computed status based on peminjaman/pengembalian
 export const getAllBuku = async (req, res) => {
   try {
     const books = await BukuTanah.findAll({
@@ -13,10 +20,107 @@ export const getAllBuku = async (req, res) => {
       ],
       order: [["createdAt", "DESC"]],
     });
-    return res.json({ data: books });
+
+    // Get list of borrowed book IDs (peminjaman without pengembalian via id_pinjam)
+    const borrowedBookIds = await sequelize.query(
+      `SELECT DISTINCT p.id_buku 
+       FROM peminjaman p
+       LEFT JOIN pengembalian pg ON p.id_pinjam = pg.id_pinjam
+       WHERE pg.id_kembali IS NULL`,
+      { type: QueryTypes.SELECT }
+    );
+
+    const borrowedIds = borrowedBookIds.map((row) => row.id_buku);
+
+    // Add computed status to each book
+    const booksWithStatus = books.map((book) => {
+      const bookData = book.toJSON();
+      bookData.status = borrowedIds.includes(book.id_buku)
+        ? "terpinjam"
+        : "tersedia";
+      return bookData;
+    });
+
+    return res.json({ data: booksWithStatus });
   } catch (err) {
     console.error("[bukuTanah][getAll] error:", err);
     return res.status(500).json({ error: "Failed to fetch data" });
+  }
+};
+
+// Get available books (tersedia) - optimized query for peminjaman dropdown
+export const getAvailableBuku = async (req, res) => {
+  try {
+    // Get all books
+    const allBooks = await BukuTanah.findAll({
+      include: [
+        {
+          model: Petugas,
+          as: "Petugas",
+          attributes: ["id_petugas", "nama"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    // Get borrowed book IDs using raw query for better performance
+    const borrowedBookIds = await sequelize.query(
+      `SELECT DISTINCT p.id_buku 
+       FROM peminjaman p
+       LEFT JOIN pengembalian pg ON p.id_pinjam = pg.id_pinjam
+       WHERE pg.id_kembali IS NULL`,
+      { type: QueryTypes.SELECT }
+    );
+
+    const borrowedIds = borrowedBookIds.map((row) => row.id_buku);
+
+    // Filter out borrowed books
+    const availableBooks = allBooks.filter(
+      (book) => !borrowedIds.includes(book.id_buku)
+    );
+
+    return res.json({ data: availableBooks });
+  } catch (err) {
+    console.error("[bukuTanah][getAvailable] error:", err);
+    return res.status(500).json({ error: "Failed to fetch available books" });
+  }
+};
+
+// Get borrowed books (terpinjam) - for pengembalian dropdown
+export const getBorrowedBuku = async (req, res) => {
+  try {
+    // Get all books
+    const allBooks = await BukuTanah.findAll({
+      include: [
+        {
+          model: Petugas,
+          as: "Petugas",
+          attributes: ["id_petugas", "nama"],
+        },
+      ],
+      order: [["createdAt", "DESC"]],
+    });
+
+    // Get borrowed book IDs using raw query
+    const borrowedBookIds = await sequelize.query(
+      `SELECT DISTINCT p.id_buku 
+       FROM peminjaman p
+       LEFT JOIN pengembalian pg ON p.id_pinjam = pg.id_pinjam
+       WHERE pg.id_kembali IS NULL`,
+      { type: QueryTypes.SELECT }
+    );
+
+    const borrowedIds = borrowedBookIds.map((row) => row.id_buku);
+
+    // Filter only borrowed books
+    const borrowedBooks = allBooks.filter((book) =>
+      borrowedIds.includes(book.id_buku)
+    );
+
+    return res.json({ data: borrowedBooks });
+  } catch (err) {
+    console.error("[bukuTanah][getBorrowed] error:", err);
+    return res.status(500).json({ error: "Failed to fetch borrowed books" });
   }
 };
 
@@ -40,25 +144,25 @@ export const createBuku = async (req, res) => {
   try {
     // support both camelCase and snake_case from frontend
     const body = req.body || {};
-    const kode_buku = body.kode_buku || body.kodeBuku || body.kode || null;
+    const kode_buku = body.kode_buku || body.kodeBuku || null;
     const nama_pemilik =
       body.nama_pemilik || body.namaPemilik || body.nama || null;
     const kecamatan = body.kecamatan || body.kecamatanName || null;
     const jenis_buku = body.jenis_buku || body.jenisBuku || null;
     const tanggal_input = body.tanggal_input || body.tanggalInput || null;
 
-    if (!kode_buku)
-      return res.status(400).json({ error: "kode_buku is required" });
+    // Validate required fields
+    if (!kode_buku) {
+      return res.status(400).json({ error: "Kode buku harus diisi" });
+    }
 
     const idPetugas = req.user?.id;
     if (!idPetugas) return res.status(401).json({ error: "Unauthorized" });
 
     // Check if kode_buku already exists
-    const existingBuku = await BukuTanah.findOne({ where: { kode_buku } });
-    if (existingBuku) {
-      return res.status(400).json({
-        error: `Kode buku "${kode_buku}" sudah ada di database. Gunakan kode buku yang berbeda.`,
-      });
+    const existing = await BukuTanah.findOne({ where: { kode_buku } });
+    if (existing) {
+      return res.status(400).json({ error: "Kode buku sudah ada" });
     }
 
     const buku = await BukuTanah.create({
@@ -71,7 +175,7 @@ export const createBuku = async (req, res) => {
     });
 
     console.log(
-      `[bukuTanah][create] created id=${buku.id_buku} by petugas=${idPetugas}`
+      `[bukuTanah][create] created id=${buku.id_buku} kode=${kode_buku} by petugas=${idPetugas}`
     );
     return res.status(201).json({ data: buku });
   } catch (err) {

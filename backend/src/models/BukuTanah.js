@@ -13,7 +13,7 @@ export const BukuTanah = sequelize.define(
     tanggal_input: { type: DataTypes.DATEONLY },
     id_petugas: { type: DataTypes.INTEGER, allowNull: false },
     status: {
-      type: DataTypes.ENUM("tersedia", "dipinjam"),
+      type: DataTypes.ENUM("tersedia", "terpinjam"),
       defaultValue: "tersedia",
     },
   },

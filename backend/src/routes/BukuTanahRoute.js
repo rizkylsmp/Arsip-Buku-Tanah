@@ -1,16 +1,20 @@
 import express from "express";
 import {
   getAllBuku,
+  getAvailableBuku,
+  getBorrowedBuku,
   getBukuById,
   createBuku,
   updateBuku,
   deleteBuku,
-} from "../controllers/BukuTanahController.js";
+} from "../controllers/bukuTanahController.js";
 import { authenticate } from "../middlewares/auth.js";
 
 const router = express.Router();
 
 // Public: list and get
+router.get("/buku-tanah/available", getAvailableBuku); // Must be before /:id to avoid conflict
+router.get("/buku-tanah/borrowed", getBorrowedBuku); // For pengembalian dropdown
 router.get("/buku-tanah", getAllBuku);
 router.get("/buku-tanah/:id", getBukuById);
 

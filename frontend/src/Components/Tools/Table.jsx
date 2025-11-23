@@ -5,6 +5,7 @@ import {
 } from "@radix-ui/react-icons";
 import { Button, IconButton } from "@radix-ui/themes";
 import React, { useState, useMemo } from "react";
+import { MoonLoader } from "react-spinners";
 
 const Table = ({
   data,
@@ -96,61 +97,74 @@ const Table = ({
   );
 
   return (
-    <div className="w-full p-5">
+    <div className="w-full p-3 md:p-5">
       {/* Global Search */}
-      <div className="mb-4 flex justify-between items-center">
-        <div className="flex items-center gap-3">
-          <div className="relative flex items-center">
-            <MagnifyingGlassIcon className="absolute left-3 w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search all columns..."
-              className="pl-9 pr-3 py-2 border border-abu rounded w-64 focus:outline-none  focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              value={searchText}
-              onChange={(e) => handleGlobalSearch(e.target.value)}
-            />
+      <div className="mb-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4 shadow-sm border border-slate-200">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
+            <div className="relative flex items-center w-full sm:w-auto">
+              <MagnifyingGlassIcon className="absolute left-3 w-5 h-5 text-blue-600" />
+              <input
+                type="text"
+                placeholder="Cari di semua kolom..."
+                className="pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-lg w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm transition-all bg-white"
+                value={searchText}
+                onChange={(e) => handleGlobalSearch(e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="px-4 py-2.5 text-sm bg-white border-2 border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 whitespace-nowrap transition-all shadow-sm flex items-center gap-2 font-medium"
+            >
+              <img
+                src="https://www.svgrepo.com/show/340305/filter-reset.svg"
+                alt=""
+                className="w-4 h-4"
+              />
+              Reset
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={resetFilters}
-            className="px-3 py-2 text-sm bg-abu rounded hover:bg-gray-100"
-          >
-            Reset
-          </button>
-        </div>
-        <div className="text-sm text-gray-600">
-          Showing {paginatedData.length} of {data.length} entries
+          <div className="text-sm font-medium text-gray-700 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+            Menampilkan {paginatedData.length} dari {data.length} data
+          </div>
         </div>
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto relative">
+      <div className="overflow-x-auto relative rounded-xl border-2 border-gray-200 shadow-lg">
         {loading && (
-          <div className="absolute inset-0 bg-white bg-opacity-70 flex items-center justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+          <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
+            <div className="flex flex-col items-center gap-3">
+              <MoonLoader color="#3b82f6" size={50} />
+              <p className="text-sm font-medium text-gray-600">Loading...</p>
+            </div>
           </div>
         )}
-        <table className="min-w-full bg-white border border-abu">
+        <table className="min-w-full bg-white">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50">
               {columns.map((column) => (
-                <th key={column.key} className="px-6 py-3 border-b border-abu">
-                  <div className="flex flex-col justify-between">
+                <th
+                  key={column.key}
+                  className="px-3 md:px-6 py-4 border-b-2 border-blue-200"
+                >
+                  <div className="flex flex-col justify-between gap-2">
                     <div
-                      className="flex items-center cursor-pointer"
+                      className="flex items-center cursor-pointer text-sm md:text-base whitespace-nowrap font-semibold text-gray-700 hover:text-blue-600 transition-colors"
                       onClick={() => handleSort(column.key)}
                     >
                       {column.header}
                       {sortConfig.key === column.key && (
-                        <span className="ml-1">
+                        <span className="ml-2 text-blue-600 font-bold">
                           {sortConfig.direction === "asc" ? "↑" : "↓"}
                         </span>
                       )}
                     </div>
                     <input
                       type="text"
-                      placeholder={`Seacrh ${column.header}`}
-                      className="mt-2 px-2 py-1 text-xs border font-extralight focus:ring-0 focus:outline-none border-abu rounded w-full"
+                      placeholder={`Filter ${column.header}...`}
+                      className="px-3 py-1.5 text-xs border-2 border-blue-300 font-normal focus:ring-2 focus:ring-blue-400 focus:outline-none focus:border-blue-400 rounded-md w-full bg-white/95 text-gray-800 placeholder-gray-500"
                       onChange={(e) =>
                         handleColumnFilter(column.key, e.target.value)
                       }
@@ -160,8 +174,10 @@ const Table = ({
                 </th>
               ))}
               {(onEdit || onDelete || onChangePassword) && (
-                <th className="px-6 py-3 border-b border-abu">
-                  <div className="flex items-center justify-center">Action</div>
+                <th className="px-3 md:px-6 py-4 border-b-2 border-blue-200">
+                  <div className="flex items-center justify-center text-sm md:text-base font-semibold text-gray-700">
+                    Aksi
+                  </div>
                 </th>
               )}
             </tr>
@@ -170,24 +186,26 @@ const Table = ({
             {paginatedData.map((row, index) => (
               <tr
                 key={index}
-                className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
+                className={`transition-colors border-b border-gray-200 hover:bg-blue-50 ${
+                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                }`}
               >
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="px-6 py-4 border-b border-abu"
+                    className="px-3 md:px-6 py-3 md:py-4 text-sm md:text-base text-gray-700"
                   >
                     {column.render ? column.render(row) : row[column.key]}
                   </td>
                 ))}
                 {(onEdit || onDelete || onChangePassword) && (
-                  <td className="px-6 py-4 border-b border-abu">
+                  <td className="px-3 md:px-6 py-3 md:py-4">
                     <div className="flex gap-2 items-center justify-center">
                       {onEdit && (
                         <button
                           type="button"
                           onClick={() => onEdit(row)}
-                          className="inline-flex items-center justify-center h-7 w-7 rounded bg-blue-100 hover:bg-blue-200 text-blue-600 transition"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                           title="Edit"
                         >
                           <svg
@@ -204,7 +222,7 @@ const Table = ({
                         <button
                           type="button"
                           onClick={() => onChangePassword(row)}
-                          className="inline-flex items-center justify-center h-7 w-7 rounded bg-yellow-100 hover:bg-yellow-200 text-yellow-600 transition"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                           title="Ubah Password"
                         >
                           <svg
@@ -220,7 +238,7 @@ const Table = ({
                         <button
                           type="button"
                           onClick={() => onDelete(row)}
-                          className="inline-flex items-center justify-center h-7 w-7 rounded bg-red-100 hover:bg-red-200 text-red-600 transition"
+                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all shadow-md hover:shadow-lg transform hover:scale-105"
                           title="Delete"
                         >
                           <svg
@@ -242,21 +260,23 @@ const Table = ({
       </div>
 
       {/* Pagination */}
-      <div className="mt-4 flex justify-between items-center">
+      <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4 border border-slate-200">
         <div className="flex gap-2 items-center">
           <IconButton
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-3 py-2 border-2 border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-100 hover:border-blue-400 transition-all shadow-sm"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            <ChevronLeftIcon />
+            <ChevronLeftIcon className="w-5 h-5" />
           </IconButton>
           <div className="flex items-center gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <Button
                 key={page}
-                className={`px-3 py-1 border rounded ${
-                  currentPage === page ? "bg-blue-500 text-white" : ""
+                className={`px-4 py-2 rounded-lg font-semibold transition-all shadow-sm ${
+                  currentPage === page
+                    ? "bg-blue-600 text-white border-2 border-blue-500 shadow-md"
+                    : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-blue-50 hover:border-blue-400"
                 }`}
                 onClick={() => setCurrentPage(page)}
               >
@@ -265,18 +285,17 @@ const Table = ({
             ))}
           </div>
           <IconButton
-            className="px-3 py-1 border rounded disabled:opacity-50"
+            className="px-3 py-2 border-2 border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-100 hover:border-blue-400 transition-all shadow-sm"
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             disabled={currentPage === totalPages}
           >
-            {" "}
-            <ChevronRightIcon />
+            <ChevronRightIcon className="w-5 h-5" />
           </IconButton>
         </div>
-        <div className="text-sm text-gray-600">
-          Page {currentPage} of {totalPages}
+        <div className="text-sm font-medium text-gray-700 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
+          Halaman {currentPage} dari {totalPages}
         </div>
       </div>
     </div>

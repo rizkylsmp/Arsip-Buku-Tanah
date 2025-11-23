@@ -12,12 +12,25 @@ export const Peminjaman = sequelize.define(
       autoIncrement: true,
       primaryKey: true,
     },
-    nama_peminjam: { type: DataTypes.STRING(100), allowNull: false },
-    tanggal_pinjam: { type: DataTypes.DATEONLY, allowNull: false },
-    keterangan: { type: DataTypes.TEXT },
-    status_pinjam: {
-      type: DataTypes.ENUM("dipinjam", "dikembalikan"),
-      defaultValue: "dipinjam",
+    kode_peminjaman: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      unique: true,
+    },
+    id_petugas: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    id_buku: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    tanggal_pinjam: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
+    keterangan: {
+      type: DataTypes.TEXT,
     },
   },
   {

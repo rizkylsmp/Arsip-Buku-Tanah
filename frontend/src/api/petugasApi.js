@@ -20,7 +20,6 @@ export const getPetugas = async () => {
   try {
     // list all petugas
     const response = await axios.get(`${BASE_URL}/petugas`, getAuthHeader());
-    console.log(response);
     return response; // return full axios response to keep consistency with other APIs
   } catch (error) {
     console.error("Error fetching petugas:", error);

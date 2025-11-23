@@ -21,9 +21,37 @@ const getAuthHeader = () => {
 export const getBukuTanah = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/buku-tanah`, getAuthHeader());
-    return response.data;
+    return response; // Return full axios response for consistency
   } catch (error) {
     console.error("Error fetching buku tanah:", error);
+    throw error;
+  }
+};
+
+// Get available buku tanah (tersedia only)
+export const getAvailableBukuTanah = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/buku-tanah/available`,
+      getAuthHeader()
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching available buku tanah:", error);
+    throw error;
+  }
+};
+
+// Get borrowed buku tanah (terpinjam only)
+export const getBorrowedBukuTanah = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/buku-tanah/borrowed`,
+      getAuthHeader()
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching borrowed buku tanah:", error);
     throw error;
   }
 };

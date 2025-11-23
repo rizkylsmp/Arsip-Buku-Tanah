@@ -3,12 +3,13 @@ import { Separator } from "radix-ui";
 
 const Header = ({ title = "", children }) => {
   return (
-    <div>
-      <div className="flex justify-between items-center px-8 py-4">
-        <div className="font-bold text-2xl ">{title}</div>
+    <div className="bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50 border-b-2 border-blue-200 shadow-sm">
+      <div className="flex justify-between items-center px-4 md:px-8 py-4 md:py-5">
+        <div className="font-bold text-lg md:text-2xl text-gray-800">
+          {title}
+        </div>
         {children}
       </div>
-      <Separator.Root className=" bg-abu/50 data-[orientation=horizontal]:h-px data-[orientation=vertical]:h-full data-[orientation=horizontal]:w-full data-[orientation=vertical]:w-px" />
     </div>
   );
 };

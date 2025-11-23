@@ -25,6 +25,66 @@ const Form = ({
     setFormData((prev) => ({ ...prev, [fieldKey]: e.target.value }));
   };
 
+  const renderField = (item, index) => {
+    const fieldKey = labelToKey(item.label);
+    const isDisabled = disabledFields.includes(fieldKey) || item.disabled;
+    const commonClasses =
+      "box-border inline-flex w-full appearance-none rounded-lg px-3 py-2 text-sm leading-none border-2 border-slate-200 outline-none bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 shadow-sm";
+
+    if (item.type === "select") {
+      return (
+        <select
+          name={fieldKey}
+          id={fieldKey}
+          className={`${commonClasses}`}
+          required={item.required ?? true}
+          value={formData[fieldKey]}
+          onChange={(e) => handleInputChange(e, item.label)}
+          disabled={isDisabled}
+        >
+          <option value="">Pilih {item.label}</option>
+          {item.options?.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    if (item.type === "textarea") {
+      return (
+        <textarea
+          name={fieldKey}
+          id={fieldKey}
+          className={`${commonClasses} min-h-24 resize-y`}
+          required={item.required ?? true}
+          placeholder={"Masukan " + item.label}
+          value={formData[fieldKey]}
+          onChange={(e) => handleInputChange(e, item.label)}
+          disabled={isDisabled}
+        />
+      );
+    }
+
+    return (
+      <input
+        name={fieldKey}
+        id={fieldKey}
+        className={`${commonClasses}`}
+        type={item.type}
+        required={item.required ?? true}
+        placeholder={"Masukan " + item.label}
+        autoComplete={
+          item.autocomplete ?? (disableAutofill ? "off" : undefined)
+        }
+        value={formData[fieldKey]}
+        onChange={(e) => handleInputChange(e, item.label)}
+        disabled={isDisabled}
+      />
+    );
+  };
+
   return (
     <form
       onSubmit={onSubmit}
@@ -42,43 +102,23 @@ const Form = ({
             overflow: "hidden",
           }}
           aria-hidden
-        >
-          <input type="text" name="__fake_username" autoComplete="username" />
-          <input
-            type="password"
-            name="__fake_password"
-            autoComplete="new-password"
-          />
-        </div>
+        ></div>
       )}
-      <div className="mb-3 grid flex-col gap-4">
+      <div className="mb-3 grid flex-col gap-3 md:gap-4">
         {fields.map((item, index) => (
-          <div key={index} className="flex gap-5">
-            <div className="w-1/5">
-              <label className="text-md">{item.label}</label>
+          <div key={index} className="flex flex-col md:flex-row gap-2 md:gap-5">
+            <div className="w-full md:w-1/5">
+              <label className="text-sm md:text-base font-semibold text-gray-700">
+                {item.label}
+              </label>
             </div>
-            <div className="w-4/5">
-              <input
-                name={labelToKey(item.label)}
-                id={labelToKey(item.label)}
-                className="box-border inline-flex h-8 w-full appearance-none rounded px-2.5 text-sm leading-none shadow-[0_0_0_1px] shadow-abu outline-none selection:bg-blackA6 selection:text-black hover:shadow-[0_0_0_1px_black] focus:shadow-[0_0_0_2px_black] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
-                type={item.type}
-                required={item.required ?? true}
-                placeholder={"Masukan " + item.label}
-                autoComplete={
-                  item.autocomplete ?? (disableAutofill ? "off" : undefined)
-                }
-                value={formData[labelToKey(item.label)]}
-                onChange={(e) => handleInputChange(e, item.label)}
-                disabled={disabledFields.includes(labelToKey(item.label))}
-              />
-            </div>
+            <div className="w-full md:w-4/5">{renderField(item, index)}</div>
           </div>
         ))}
       </div>
       <button
         type="submit"
-        className="mt-5 py-3 w-full text-center rounded bg-biru-terang font-medium leading-none text-white hover:bg-biru"
+        className="mt-6 py-3 w-full text-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold leading-none text-white shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all text-sm md:text-base"
       >
         {buttonText}
       </button>
