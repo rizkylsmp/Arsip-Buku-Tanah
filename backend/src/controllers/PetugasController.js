@@ -38,6 +38,7 @@ export const createPetugasController = async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const confPassword = req.body.conf_password || req.body.confPassword;
+    const role = req.body.role || "pegawai"; // Default to pegawai
     const jenisKelamin = req.body.jenis_kelamin || req.body.jenisKelamin;
     const noHandphone = req.body.no_handphone || req.body.noHandphone;
     const alamat = req.body.alamat;
@@ -50,6 +51,13 @@ export const createPetugasController = async (req, res) => {
       return res
         .status(400)
         .json({ error: "Password and confirmation do not match" });
+    }
+
+    // Validate role
+    if (role !== "admin" && role !== "pegawai") {
+      return res
+        .status(400)
+        .json({ error: "Invalid role. Must be 'admin' or 'pegawai'" });
     }
 
     // Check if username already exists
@@ -65,6 +73,7 @@ export const createPetugasController = async (req, res) => {
       nama,
       username,
       password: hash,
+      role,
       jenis_kelamin: jenisKelamin || null,
       no_handphone: noHandphone || null,
       alamat: alamat || null,
@@ -90,6 +99,16 @@ export const updatePetugasController = async (req, res) => {
       no_handphone: req.body.no_handphone || req.body.noHandphone,
       alamat: req.body.alamat,
     };
+
+    // Allow admin to update role
+    if (req.body.role) {
+      if (req.body.role !== "admin" && req.body.role !== "pegawai") {
+        return res
+          .status(400)
+          .json({ error: "Invalid role. Must be 'admin' or 'pegawai'" });
+      }
+      updates.role = req.body.role;
+    }
 
     // Only update password if provided
     if (req.body.password) {

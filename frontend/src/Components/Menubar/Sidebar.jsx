@@ -13,6 +13,10 @@ const Sidebar = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = React.useState(false);
 
+  // Get user role from localStorage
+  const profile = JSON.parse(localStorage.getItem("profile") || "{}");
+  const userRole = profile?.result?.role || "pegawai";
+
   const menu = [
     { name: "Dashboard", link: "/", icon: "🏠" },
     { name: "Data Buku Tanah", link: "/buku-tanah", icon: "📚" },
@@ -22,7 +26,7 @@ const Sidebar = () => {
       link: "/pengembalian",
       icon: "📥",
     },
-    { name: "Data Petugas", link: "/petugas", icon: "👥" },
+    { name: "Data Petugas", link: "/petugas", icon: "👥", adminOnly: true },
   ];
 
   const isActive = (link) => {
@@ -88,8 +92,12 @@ const Sidebar = () => {
         {/* Toggle Button */}
         <div className="flex items-center justify-between relative z-10">
           {isOpen && (
-            <div className="font-bold h-16 md:h-24 flex items-center justify-center flex-1 px-4 my-6">
-              <img src="/bpn.png" alt="Logo" className="w-fit h-fit p-10" />
+            <div className="flex items-center justify-center flex-1 py-2">
+              <img
+                src="/bpn.png"
+                alt="Logo BPN"
+                className="w-auto h-16 md:h-20 object-contain"
+              />
             </div>
           )}
           <button
@@ -105,35 +113,37 @@ const Sidebar = () => {
 
         {/* Menu Items */}
         <div className="flex flex-col gap-3 relative z-10">
-          {menu.map((item) => (
-            <Link
-              key={item.name}
-              to={item.link}
-              onClick={() => {
-                // Only close sidebar on mobile (< 768px)
-                if (window.innerWidth < 768) {
-                  setIsOpen(false);
-                }
-              }}
-              className={`group px-4 cursor-pointer rounded-xl flex gap-3 items-center transition-all transform ${
-                isActive(item.link)
-                  ? "bg-blue-600 text-white font-semibold shadow-lg scale-105"
-                  : "text-gray-700 hover:bg-blue-100 border border-transparent hover:border-blue-200"
-              } ${!isOpen ? "md:justify-center py-1" : "py-2"}`}
-              title={!isOpen ? item.name : ""}
-            >
-              <span className="flex-shrink-0 group-hover:scale-110 transition-transform">
-                {item.icon}
-              </span>
-              <span
-                className={`whitespace-nowrap ${
-                  !isOpen ? "md:hidden" : "md:text-md text-sm"
-                }`}
+          {menu
+            .filter((item) => !item.adminOnly || userRole === "admin")
+            .map((item) => (
+              <Link
+                key={item.name}
+                to={item.link}
+                onClick={() => {
+                  // Only close sidebar on mobile (< 768px)
+                  if (window.innerWidth < 768) {
+                    setIsOpen(false);
+                  }
+                }}
+                className={`group px-4 cursor-pointer rounded-xl flex gap-3 items-center transition-all transform ${
+                  isActive(item.link)
+                    ? "bg-blue-600 text-white font-semibold shadow-lg scale-105"
+                    : "text-gray-700 hover:bg-blue-100 border border-transparent hover:border-blue-200"
+                } ${!isOpen ? "md:justify-center py-1" : "py-2"}`}
+                title={!isOpen ? item.name : ""}
               >
-                {item.name}
-              </span>
-            </Link>
-          ))}
+                <span className="flex-shrink-0 group-hover:scale-110 transition-transform">
+                  {item.icon}
+                </span>
+                <span
+                  className={`whitespace-nowrap ${
+                    !isOpen ? "md:hidden" : "md:text-md text-sm"
+                  }`}
+                >
+                  {item.name}
+                </span>
+              </Link>
+            ))}
         </div>
       </div>
     </>

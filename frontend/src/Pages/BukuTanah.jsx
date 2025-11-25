@@ -30,6 +30,11 @@ const BukuTanah = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [itemToDelete, setItemToDelete] = React.useState(null);
 
+  // Get user role from localStorage
+  const profile = JSON.parse(localStorage.getItem("profile") || "{}");
+  const userRole = profile?.result?.role || "pegawai";
+  const isAdmin = userRole === "admin";
+
   const handleEdit = (row) => {
     setIsEditMode(true);
     setEditingId(row.id_buku);
@@ -145,33 +150,35 @@ const BukuTanah = () => {
   return (
     <div>
       <Header title="BUKU TANAH" input>
-        <Add
-          textButton="Tambah Buku Tanah"
-          title="Tambah Buku Tanah"
-          open={isAddOpen}
-          onOpenChange={(open) => {
-            if (!open) {
-              setIsEditMode(false);
-              setEditingId(null);
-              setFormData({
-                namaPemilik: "",
-                kecamatan: "",
-                jenisBuku: "",
-                tanggalInput: "",
-              });
-            }
-            setIsAddOpen(open);
-          }}
-        >
-          <Form
-            fields={field}
-            onSubmit={handleSubmit}
-            formData={formData}
-            setFormData={setFormData}
-            disabledFields={isEditMode ? ["kodeBuku"] : []}
-            buttonText={isEditMode ? "Update" : "Simpan"}
-          />
-        </Add>
+        {isAdmin && (
+          <Add
+            textButton="Tambah Buku Tanah"
+            title="Tambah Buku Tanah"
+            open={isAddOpen}
+            onOpenChange={(open) => {
+              if (!open) {
+                setIsEditMode(false);
+                setEditingId(null);
+                setFormData({
+                  namaPemilik: "",
+                  kecamatan: "",
+                  jenisBuku: "",
+                  tanggalInput: "",
+                });
+              }
+              setIsAddOpen(open);
+            }}
+          >
+            <Form
+              fields={field}
+              onSubmit={handleSubmit}
+              formData={formData}
+              setFormData={setFormData}
+              disabledFields={isEditMode ? ["kodeBuku"] : []}
+              buttonText={isEditMode ? "Update" : "Simpan"}
+            />
+          </Add>
+        )}
       </Header>
       <Table
         data={bukuTanahList}
@@ -209,8 +216,8 @@ const BukuTanah = () => {
         ]}
         rowsPerPage={10}
         loading={loading}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
+        onEdit={isAdmin ? handleEdit : null}
+        onDelete={isAdmin ? handleDelete : null}
       />
 
       {/* Delete Confirmation Dialog */}

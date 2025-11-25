@@ -7,17 +7,15 @@ import {
   updatePeminjamanController,
   deletePeminjamanController,
 } from "../controllers/PeminjamanController.js";
-import { verifyToken } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// Public routes
-router.get("/peminjaman", getAllPeminjaman);
-router.get("/peminjaman/:id", getPeminjamanById);
-
-// Protected routes
-router.post("/peminjaman", verifyToken, createPeminjamanController);
-router.patch("/peminjaman/:id", verifyToken, updatePeminjamanController);
-router.delete("/peminjaman/:id", verifyToken, deletePeminjamanController);
+// Protected routes (both admin and pegawai can access)
+router.get("/peminjaman", authenticate, getAllPeminjaman);
+router.get("/peminjaman/:id", authenticate, getPeminjamanById);
+router.post("/peminjaman", authenticate, createPeminjamanController);
+router.patch("/peminjaman/:id", authenticate, updatePeminjamanController);
+router.delete("/peminjaman/:id", authenticate, deletePeminjamanController);
 
 export default router;

@@ -5,8 +5,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const register = async (req, res) => {
-  const { nama, username, password, jenisKelamin, noHandphone, alamat } =
-    req.body;
+  const {
+    nama,
+    username,
+    password,
+    jenisKelamin,
+    noHandphone,
+    alamat,
+    adminCode,
+  } = req.body;
   try {
     if (!username || !password || !nama) {
       console.warn("[auth][register] missing fields", { username, nama });
@@ -24,19 +31,41 @@ export const register = async (req, res) => {
       });
     }
 
+    // Check if there are any existing admins
+    const adminCount = await Petugas.count({ where: { role: "admin" } });
+    const isFirstUser = adminCount === 0;
+
+    // Admin secret code from environment variable (default: ADMIN2024)
+    const ADMIN_SECRET_CODE = process.env.ADMIN_SECRET_CODE || "ADMIN2024";
+    const hasValidAdminCode = adminCode === ADMIN_SECRET_CODE;
+
+    // Determine role: first user OR valid admin code → admin, otherwise pegawai
+    let userRole = "pegawai";
+    let roleReason = "";
+
+    if (isFirstUser) {
+      userRole = "admin";
+      roleReason = "first user";
+    } else if (hasValidAdminCode) {
+      userRole = "admin";
+      roleReason = "admin code";
+    }
+
     const hash = await bcrypt.hash(password, 10);
     const user = await Petugas.create({
       nama,
       username,
       password: hash,
-      confirmPassword: hash,
-      jenisKelamin,
-      noHandphone,
+      role: userRole,
+      jenis_kelamin: jenisKelamin,
+      no_handphone: noHandphone,
       alamat,
     });
 
     console.log(
-      `[auth][register] new user registered: id=${user.id_petugas} username=${user.username}`
+      `[auth][register] new user registered: id=${user.id_petugas} username=${
+        user.username
+      } role=${user.role}${roleReason ? ` (${roleReason})` : ""}`
     );
     return res
       .status(201)
@@ -76,17 +105,17 @@ export const login = async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id_petugas, username: user.username },
+      { id: user.id_petugas, username: user.username, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "8h" }
     );
 
     console.log(
-      `[auth][login] user logged in: id=${user.id_petugas} username=${user.username}`
+      `[auth][login] user logged in: id=${user.id_petugas} username=${user.username} role=${user.role}`
     );
     return res.json({
       token,
-      user: { id: user.id_petugas, nama: user.nama },
+      user: { id: user.id_petugas, nama: user.nama, role: user.role },
     });
   } catch (err) {
     console.error("[auth][login] unexpected error:", err);

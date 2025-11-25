@@ -64,6 +64,18 @@ const Petugas = () => {
       { label: "No Handphone", type: "text" }
     );
 
+    // Add role field only in edit mode
+    if (isEditMode) {
+      baseFields.push({
+        label: "Role",
+        type: "select",
+        options: [
+          { value: "admin", label: "Admin" },
+          { value: "pegawai", label: "Pegawai" },
+        ],
+      });
+    }
+
     return baseFields;
   };
 
@@ -77,6 +89,7 @@ const Petugas = () => {
           alamat: formData.alamat,
           jenis_kelamin: formData.jenisKelamin,
           no_handphone: formData.noHandphone,
+          role: formData.role, // Include role in update
         });
         if (response.status === 200) {
           setIsAddOpen(false);
@@ -144,6 +157,7 @@ const Petugas = () => {
       alamat: row.alamat || "",
       jenisKelamin: row.jenis_kelamin || "",
       noHandphone: row.no_handphone || "",
+      role: row.role || "pegawai", // Include role
     });
     setIsAddOpen(true);
   };
@@ -257,6 +271,21 @@ const Petugas = () => {
           { key: "alamat", header: "Alamat" },
           { key: "jenis_kelamin", header: "Jenis Kelamin" },
           { key: "no_handphone", header: "No Handphone" },
+          {
+            key: "role",
+            header: "Role",
+            render: (row) => (
+              <span
+                className={`px-2 py-1 rounded text-xs font-semibold ${
+                  row.role === "admin"
+                    ? "bg-purple-100 text-purple-700"
+                    : "bg-blue-100 text-blue-700"
+                }`}
+              >
+                {row.role === "admin" ? "Admin" : "Pegawai"}
+              </span>
+            ),
+          },
         ]}
         loading={loading}
         rowsPerPage={10}

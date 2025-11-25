@@ -18,6 +18,7 @@ const Auth = () => {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [adminCode, setAdminCode] = React.useState("");
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -50,6 +51,7 @@ const Auth = () => {
                   name: data.user.nama,
                   id: data.user.id_petugas,
                   jabatan: data.user.jabatan,
+                  role: data.user.role, // Include role
                 },
               };
               localStorage.setItem("profile", JSON.stringify(p));
@@ -106,7 +108,12 @@ const Auth = () => {
         const res = await fetch(`${API_URL}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nama, username, password }),
+          body: JSON.stringify({
+            nama,
+            username,
+            password,
+            ...(adminCode && { adminCode }), // Include adminCode if provided
+          }),
         });
 
         const data = await res.json();
@@ -175,6 +182,7 @@ const Auth = () => {
             result: {
               name: data.user.nama,
               id: data.user.id,
+              role: data.user.role, // Store role
             },
           };
           localStorage.setItem("profile", JSON.stringify(profile));
@@ -339,6 +347,27 @@ const Auth = () => {
             >
               Konfirmasi password harus diisi
             </Form.Message>
+          </Form.Field>
+        )}
+        {isSignUp && (
+          <Form.Field
+            name="adminCode"
+            className="flex flex-col items-start gap-2"
+          >
+            <Form.Label className="text-sm font-semibold text-gray-700">
+              Kode Admin{" "}
+              <span className="text-gray-400 font-normal">(Opsional)</span>
+            </Form.Label>
+            <Form.Control
+              type="text"
+              value={adminCode}
+              placeholder="Masukkan kode admin jika punya"
+              onChange={(e) => setAdminCode(e.target.value)}
+              className="h-11 w-full rounded-lg border-2 border-gray-200 px-4 text-base text-gray-900 transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200"
+            />
+            <p className="text-xs text-gray-500">
+              Kosongkan jika Anda mendaftar sebagai pegawai
+            </p>
           </Form.Field>
         )}
         <button

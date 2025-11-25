@@ -7,17 +7,15 @@ import {
   updatePengembalianController,
   deletePengembalianController,
 } from "../controllers/PengembalianController.js";
-import { verifyToken } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-// Public routes
-router.get("/pengembalian", getAllPengembalian);
-router.get("/pengembalian/:id", getPengembalianById);
-
-// Protected routes
-router.post("/pengembalian", verifyToken, createPengembalianController);
-router.patch("/pengembalian/:id", verifyToken, updatePengembalianController);
-router.delete("/pengembalian/:id", verifyToken, deletePengembalianController);
+// Protected routes (both admin and pegawai can access)
+router.get("/pengembalian", authenticate, getAllPengembalian);
+router.get("/pengembalian/:id", authenticate, getPengembalianById);
+router.post("/pengembalian", authenticate, createPengembalianController);
+router.patch("/pengembalian/:id", authenticate, updatePengembalianController);
+router.delete("/pengembalian/:id", authenticate, deletePengembalianController);
 
 export default router;

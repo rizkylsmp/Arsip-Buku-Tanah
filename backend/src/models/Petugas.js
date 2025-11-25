@@ -13,6 +13,11 @@ export const Petugas = sequelize.define(
     nama: { type: DataTypes.STRING(100), allowNull: false },
     username: { type: DataTypes.STRING(50), allowNull: false, unique: true },
     password: { type: DataTypes.STRING(255), allowNull: false },
+    role: {
+      type: DataTypes.ENUM("admin", "pegawai"),
+      allowNull: false,
+      defaultValue: "pegawai",
+    },
     jenis_kelamin: { type: DataTypes.STRING(50) },
     no_handphone: { type: DataTypes.STRING(20) },
     alamat: { type: DataTypes.STRING(255) },
