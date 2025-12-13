@@ -99,7 +99,7 @@ JWT_SECRET=supersecretkey
 PORT=4000
 NODE_ENV=development
 FRONTEND_URL=http://localhost:5173
-ADMIN_SECRET_CODE=ADMIN2024
+ADMIN_SECRET_CODE=ADMIN
 ```
 
 #### Jalankan Migration (Penting!)
@@ -198,7 +198,7 @@ Buka browser dan akses: **http://localhost:5173**
 
 Gunakan salah satu cara:
 
-- **Cara 1**: Masukkan kode `ADMIN2024` di field "Kode Admin" saat registrasi
+- **Cara 1**: Masukkan kode `ADMIN` di field "Kode Admin" saat registrasi
 - **Cara 2**: Admin yang sudah ada bisa promosi pegawai lewat menu Data Petugas
 
 #### Registrasi Pegawai
@@ -427,7 +427,7 @@ Arsip-Buku-Tanah/
 
 ### Admin Code
 
-- Default: `ADMIN2024`
+- Default: `ADMIN`
 - Bisa diganti di `backend/.env.development` → `ADMIN_SECRET_CODE`
 - Hanya untuk registrasi admin tambahan
 
@@ -440,14 +440,6 @@ Arsip-Buku-Tanah/
 3. **Kode auto-generate**: Kode Buku, Peminjaman, Pengembalian dibuat otomatis oleh sistem
 4. **Status otomatis**: Status buku berubah otomatis saat peminjaman/pengembalian
 5. **Edit password terpisah**: Di halaman Petugas, password diubah lewat tombol khusus
-
----
-
-## 👨‍💻 Developer
-
-**Nama**: Rizky Lesmanasaputra  
-**GitHub**: [rizkylsmp](https://github.com/rizkylsmp)  
-**Repository**: [Arsip-Buku-Tanah](https://github.com/rizkylsmp/Arsip-Buku-Tanah)
 
 ---
 
@@ -467,4 +459,4 @@ MIT License - Free to use and modify
 
 ---
 
-**© 2024 Sistem Informasi Arsip Buku Tanah - BPN**
+**© 2025 Sistem Informasi Arsip Buku Tanah - BPN**
