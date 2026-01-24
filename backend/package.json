@@ -10,7 +10,7 @@
     "prod": "cross-env NODE_ENV=production node src/server.js",
     "migrate:role": "node src/scripts/addRoleColumn.js",
     "setup:db": "node scripts/setupDatabase.js",
-    "build": "npm install && node scripts/autoSetup.js"
+    "build": "npm install"
   },
   "keywords": [],
   "author": "",

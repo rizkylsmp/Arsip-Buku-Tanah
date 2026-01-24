@@ -57,15 +57,8 @@ git push origin main
    - **Runtime**: Node
    - **Build Command**:
      ```bash
-     npm run build
+     npm install
      ```
-   - **Start Command**:
-     ```bash
-     npm start
-     ```
-   - **Plan**: Free
-
-4. **Environment Variables** (Klik "Add Environment Variable"):
 
    ```
    NODE_ENV=production
@@ -82,7 +75,7 @@ git push origin main
    - Dashboard → Database `sibt-database` → Tab **"Info"**
    - Salin dari **"Internal Database URL"** atau **"Connection Details"**
 
-5. Klik **"Create Web Service"**
+4. Klik **"Create Web Service"**
 
 ---
 
@@ -92,13 +85,21 @@ Setelah klik create, Render akan:
 
 1. ✅ Clone repository dari GitHub
 2. ✅ Install dependencies (`npm install`)
-3. ✅ **OTOMATIS setup database** via `npm run build`
-   - Script `autoSetup.js` akan jalan
-   - Create tables
-   - Seed data dummy (4 petugas, 15 buku tanah, dll)
-4. ✅ Start aplikasi (`npm start`)
+3. ✅ Start aplikasi (`npm start`)
+4. ✅ **Server otomatis setup database saat start**:
+   - Connect ke database
+   - Sync tables (create jika belum ada)
+   - Cek database kosong?
+   - Ya → Seed data (4 petugas, 15 buku tanah, dll)
+   - Tidak → Skip seed
+5. ✅ Server running dan siap digunakan
 
-**Tunggu 5-10 menit** sampai deployment selesai.
+**Tunggu 3-5 menit** sampai deployment selesai.
+
+Cek **Logs** untuk melihat proses seeding:
+
+- Dashboard → Service → Logs
+- Cari log: **"✅ Database seeded successfully!"**
 
 ---
 
