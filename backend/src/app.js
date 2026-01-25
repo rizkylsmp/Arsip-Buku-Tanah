@@ -7,6 +7,7 @@ import BukuTanahRoute from "./routes/BukuTanahRoute.js";
 import PetugasRoute from "./routes/PetugasRoute.js";
 import PeminjamanRoute from "./routes/PeminjamanRoute.js";
 import PengembalianRoute from "./routes/PengembalianRoute.js";
+import DatabaseRoute from "./routes/DatabaseRoute.js";
 
 dotenv.config();
 
@@ -37,7 +38,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  }),
 );
 
 app.use(express.json());
@@ -49,5 +50,6 @@ app.use(BukuTanahRoute);
 app.use(PetugasRoute);
 app.use(PeminjamanRoute);
 app.use(PengembalianRoute);
+app.use("/api/database", DatabaseRoute);
 
 export default app;
