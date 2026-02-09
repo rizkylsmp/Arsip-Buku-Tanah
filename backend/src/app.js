@@ -7,7 +7,6 @@ import BukuTanahRoute from "./routes/BukuTanahRoute.js";
 import PetugasRoute from "./routes/PetugasRoute.js";
 import PeminjamanRoute from "./routes/PeminjamanRoute.js";
 import PengembalianRoute from "./routes/PengembalianRoute.js";
-import DatabaseRoute from "./routes/DatabaseRoute.js";
 
 dotenv.config();
 
@@ -19,6 +18,7 @@ const allowedOrigins = [
   "http://localhost:4173",
   "http://localhost:3000",
   "https://arsip-buku-tanah.vercel.app",
+  "https://arsip-buku-tanah-production.up.railway.app"
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
@@ -50,6 +50,5 @@ app.use(BukuTanahRoute);
 app.use(PetugasRoute);
 app.use(PeminjamanRoute);
 app.use(PengembalianRoute);
-app.use("/api/database", DatabaseRoute);
 
 export default app;
