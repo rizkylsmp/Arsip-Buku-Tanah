@@ -27,7 +27,7 @@ export const getAllBuku = async (req, res) => {
        FROM peminjaman p
        LEFT JOIN pengembalian pg ON p.id_pinjam = pg.id_pinjam
        WHERE pg.id_kembali IS NULL`,
-      { type: QueryTypes.SELECT }
+      { type: QueryTypes.SELECT },
     );
 
     const borrowedIds = borrowedBookIds.map((row) => row.id_buku);
@@ -69,14 +69,14 @@ export const getAvailableBuku = async (req, res) => {
        FROM peminjaman p
        LEFT JOIN pengembalian pg ON p.id_pinjam = pg.id_pinjam
        WHERE pg.id_kembali IS NULL`,
-      { type: QueryTypes.SELECT }
+      { type: QueryTypes.SELECT },
     );
 
     const borrowedIds = borrowedBookIds.map((row) => row.id_buku);
 
     // Filter out borrowed books
     const availableBooks = allBooks.filter(
-      (book) => !borrowedIds.includes(book.id_buku)
+      (book) => !borrowedIds.includes(book.id_buku),
     );
 
     return res.json({ data: availableBooks });
@@ -107,14 +107,14 @@ export const getBorrowedBuku = async (req, res) => {
        FROM peminjaman p
        LEFT JOIN pengembalian pg ON p.id_pinjam = pg.id_pinjam
        WHERE pg.id_kembali IS NULL`,
-      { type: QueryTypes.SELECT }
+      { type: QueryTypes.SELECT },
     );
 
     const borrowedIds = borrowedBookIds.map((row) => row.id_buku);
 
     // Filter only borrowed books
     const borrowedBooks = allBooks.filter((book) =>
-      borrowedIds.includes(book.id_buku)
+      borrowedIds.includes(book.id_buku),
     );
 
     return res.json({ data: borrowedBooks });
@@ -144,38 +144,42 @@ export const createBuku = async (req, res) => {
   try {
     // support both camelCase and snake_case from frontend
     const body = req.body || {};
-    const kode_buku = body.kode_buku || body.kodeBuku || null;
+    const nomor_hak = body.nomor_hak || body.nomorHak || null;
     const nama_pemilik =
       body.nama_pemilik || body.namaPemilik || body.nama || null;
     const kecamatan = body.kecamatan || body.kecamatanName || null;
+    const desa_kelurahan = body.desa_kelurahan || body.desaKelurahan || null;
     const jenis_buku = body.jenis_buku || body.jenisBuku || null;
+    const luas_tanah = body.luas_tanah || body.luasTanah || null;
     const tanggal_input = body.tanggal_input || body.tanggalInput || null;
 
     // Validate required fields
-    if (!kode_buku) {
-      return res.status(400).json({ error: "Kode buku harus diisi" });
+    if (!nomor_hak) {
+      return res.status(400).json({ error: "Nomor Hak harus diisi" });
     }
 
     const idPetugas = req.user?.id;
     if (!idPetugas) return res.status(401).json({ error: "Unauthorized" });
 
-    // Check if kode_buku already exists
-    const existing = await BukuTanah.findOne({ where: { kode_buku } });
+    // Check if nomor_hak already exists
+    const existing = await BukuTanah.findOne({ where: { nomor_hak } });
     if (existing) {
-      return res.status(400).json({ error: "Kode buku sudah ada" });
+      return res.status(400).json({ error: "Nomor Hak sudah ada" });
     }
 
     const buku = await BukuTanah.create({
-      kode_buku,
+      nomor_hak,
       nama_pemilik,
       kecamatan,
+      desa_kelurahan,
       jenis_buku,
+      luas_tanah,
       tanggal_input,
       id_petugas: idPetugas,
     });
 
     console.log(
-      `[bukuTanah][create] created id=${buku.id_buku} kode=${kode_buku} by petugas=${idPetugas}`
+      `[bukuTanah][create] created id=${buku.id_buku} nomor_hak=${nomor_hak} by petugas=${idPetugas}`,
     );
     return res.status(201).json({ data: buku });
   } catch (err) {
@@ -192,11 +196,13 @@ export const updateBuku = async (req, res) => {
     if (!buku) return res.status(404).json({ error: "Buku not found" });
 
     // Handle both camelCase and snake_case from frontend
-    // Note: DO NOT update kode_buku (it's unique and disabled in edit form)
+    // Note: DO NOT update nomor_hak (it's unique and disabled in edit form)
     const updates = {
       nama_pemilik: req.body.nama_pemilik || req.body.namaPemilik,
       kecamatan: req.body.kecamatan,
+      desa_kelurahan: req.body.desa_kelurahan || req.body.desaKelurahan,
       jenis_buku: req.body.jenis_buku || req.body.jenisBuku,
+      luas_tanah: req.body.luas_tanah || req.body.luasTanah,
       tanggal_input: req.body.tanggal_input || req.body.tanggalInput,
     };
 

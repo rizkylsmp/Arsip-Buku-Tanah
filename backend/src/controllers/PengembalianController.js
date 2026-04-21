@@ -29,7 +29,7 @@ const generateKodePengembalian = async () => {
   let sequence = 1;
   if (lastPengembalian) {
     const lastSequence = parseInt(
-      lastPengembalian.kode_pengembalian.split("-")[2]
+      lastPengembalian.kode_pengembalian.split("-")[2],
     );
     sequence = lastSequence + 1;
   }
@@ -49,7 +49,7 @@ export const getAllPengembalian = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
         {
           model: Peminjaman,
@@ -81,7 +81,7 @@ export const getPengembalianById = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
         {
           model: Peminjaman,
@@ -170,7 +170,7 @@ export const createPengembalianController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
         {
           model: Peminjaman,
@@ -181,7 +181,7 @@ export const createPengembalianController = async (req, res) => {
     });
 
     console.log(
-      `[pengembalian][create] created id=${pengembalian.id_kembali} kode=${kode_pengembalian}`
+      `[pengembalian][create] created id=${pengembalian.id_kembali} kode=${kode_pengembalian}`,
     );
     res
       .status(201)
@@ -224,7 +224,7 @@ export const updatePengembalianController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
       ],
     });

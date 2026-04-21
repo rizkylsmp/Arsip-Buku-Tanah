@@ -42,7 +42,7 @@ export const getAllPeminjaman = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -69,7 +69,7 @@ export const getPeminjamanById = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
       ],
     });
@@ -143,13 +143,13 @@ export const createPeminjamanController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
       ],
     });
 
     console.log(
-      `[peminjaman][create] created id=${peminjaman.id_pinjam} kode=${kode_peminjaman}`
+      `[peminjaman][create] created id=${peminjaman.id_pinjam} kode=${kode_peminjaman}`,
     );
     res
       .status(201)
@@ -211,7 +211,7 @@ export const updatePeminjamanController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "kode_buku", "nama_pemilik", "jenis_buku"],
+          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
         },
       ],
     });

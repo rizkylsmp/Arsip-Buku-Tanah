@@ -18,7 +18,7 @@ const allowedOrigins = [
   "http://localhost:4173",
   "http://localhost:3000",
   "https://arsip-buku-tanah.vercel.app",
-  "https://arsip-buku-tanah-production.up.railway.app"
+  "https://arsip-buku-tanah-production.up.railway.app",
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 

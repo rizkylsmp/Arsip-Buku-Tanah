@@ -102,18 +102,42 @@ FRONTEND_URL=http://localhost:5173
 ADMIN_SECRET_CODE=ADMIN
 ```
 
-#### Jalankan Migration (Penting!)
+#### Jalankan Database Setup (Penting!)
 
 ```bash
-# Tambahkan kolom role ke tabel petugas
-npm run migrate:role
+# Setup database lengkap dengan auto-migration
+npm run setup
 ```
+
+Ini akan otomatis:
+
+- ✅ Koneksi ke database
+- ✅ Sync models Sequelize
+- ✅ Migrate kolom kode_buku → nomor_hak
+- ✅ Tambah kolom desa_kelurahan, luas_tanah
+- ✅ Tambah kolom role ke tabel petugas
+- ✅ Set user pertama sebagai admin
 
 Output yang diharapkan:
 
 ```
-✅ Role column added successfully!
-✅ First user set as admin
+========================================
+  DATABASE SETUP & MIGRATION SCRIPT
+========================================
+
+✅ Database connected
+✅ Models synced
+✓ nomor_hak column already exists
+✓ desa_kelurahan column already exists
+✓ luas_tanah column already exists
+✓ role column already exists
+
+========================================
+  SETUP COMPLETED ✅
+========================================
+
+✓ Database already up-to-date, no migrations needed
+🚀 Ready to run! You can now start the server.
 ```
 
 ---

@@ -73,7 +73,7 @@ const Peminjaman = () => {
             id_pinjam: item.id_pinjam,
             kode_peminjaman: item.kode_peminjaman,
             nama_peminjam: item.Petugas?.nama,
-            kode_buku: item.BukuTanah?.kode_buku,
+            kode_buku: item.BukuTanah?.nomor_hak,
             nama_pemilik: item.BukuTanah?.nama_pemilik,
             tanggal_pinjam: item.tanggal_pinjam,
             keterangan: item.keterangan,
@@ -124,7 +124,7 @@ const Peminjaman = () => {
       type: "select",
       options: bukuTanahList.map((b) => ({
         value: b.id_buku,
-        label: `${b.kode_buku} - ${b.nama_pemilik}`,
+        label: `${b.nomor_hak} - ${b.nama_pemilik}`,
       })),
     },
     { label: "Tanggal Pinjam", type: "date" },
@@ -134,7 +134,7 @@ const Peminjaman = () => {
   const columns = [
     { key: "kode_peminjaman", header: "Kode Peminjaman" },
     { key: "nama_peminjam", header: "Nama Peminjam" },
-    { key: "kode_buku", header: "Kode Buku" },
+    { key: "kode_buku", header: "Nomor Hak" },
     { key: "nama_pemilik", header: "Nama Pemilik" },
     { key: "tanggal_pinjam", header: "Tanggal Pinjam" },
     { key: "keterangan", header: "Keterangan" },

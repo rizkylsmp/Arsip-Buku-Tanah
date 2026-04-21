@@ -8,6 +8,9 @@
     "start": "cross-env NODE_ENV=production node src/server.js",
     "dev": "cross-env NODE_ENV=development nodemon src/server.js",
     "prod": "cross-env NODE_ENV=production node src/server.js",
+    "setup": "cross-env NODE_ENV=development node src/scripts/setupDatabase.js",
+    "setup:prod": "cross-env NODE_ENV=production node src/scripts/setupDatabase.js",
+    "migrate": "cross-env NODE_ENV=development node src/scripts/setupDatabase.js",
     "migrate:role": "node src/scripts/addRoleColumn.js",
     "build": "npm install"
   },

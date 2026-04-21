@@ -15,10 +15,12 @@ import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const BukuTanah = () => {
   const [formData, setFormData] = React.useState({
-    kodeBuku: "",
+    nomorHak: "",
     namaPemilik: "",
     kecamatan: "",
+    desaKelurahan: "",
     jenisBuku: "",
+    luasTanah: "",
     tanggalInput: "",
   });
 
@@ -39,10 +41,12 @@ const BukuTanah = () => {
     setIsEditMode(true);
     setEditingId(row.id_buku);
     setFormData({
-      kodeBuku: row.kode_buku || "",
+      nomorHak: row.nomor_hak || "",
       namaPemilik: row.nama_pemilik || "",
       kecamatan: row.kecamatan || "",
+      desaKelurahan: row.desa_kelurahan || "",
       jenisBuku: row.jenis_buku || "",
+      luasTanah: row.luas_tanah || "",
       tanggalInput: row.tanggal_input ? row.tanggal_input.split("T")[0] : "",
     });
     setIsAddOpen(true);
@@ -90,11 +94,13 @@ const BukuTanah = () => {
     event.preventDefault();
     try {
       if (isEditMode && editingId) {
-        // Update mode - DO NOT send kode_buku (it's unique and disabled)
+        // Update mode - DO NOT send nomor_hak (it's unique and disabled)
         const response = await updateBukuTanah(editingId, {
           nama_pemilik: formData.namaPemilik,
           kecamatan: formData.kecamatan,
+          desa_kelurahan: formData.desaKelurahan,
           jenis_buku: formData.jenisBuku,
+          luas_tanah: formData.luasTanah,
           tanggal_input: formData.tanggalInput,
         });
         if (response.status === 200) {
@@ -102,30 +108,36 @@ const BukuTanah = () => {
           setIsEditMode(false);
           setEditingId(null);
           setFormData({
-            kodeBuku: "",
+            nomorHak: "",
             namaPemilik: "",
             kecamatan: "",
+            desaKelurahan: "",
             jenisBuku: "",
+            luasTanah: "",
             tanggalInput: "",
           });
           await fetchBukuTanah();
         }
       } else {
-        // Create mode - user must input kode_buku manually
+        // Create mode - user must input nomor_hak manually
         const response = await createBukuTanah({
-          kode_buku: formData.kodeBuku,
+          nomor_hak: formData.nomorHak,
           nama_pemilik: formData.namaPemilik,
           kecamatan: formData.kecamatan,
+          desa_kelurahan: formData.desaKelurahan,
           jenis_buku: formData.jenisBuku,
+          luas_tanah: formData.luasTanah,
           tanggal_input: formData.tanggalInput,
         });
         if (response.status === 201) {
           setIsAddOpen(false);
           setFormData({
-            kodeBuku: "",
+            nomorHak: "",
             namaPemilik: "",
             kecamatan: "",
+            desaKelurahan: "",
             jenisBuku: "",
+            luasTanah: "",
             tanggalInput: "",
           });
           await fetchBukuTanah();
@@ -140,10 +152,12 @@ const BukuTanah = () => {
   };
 
   const field = [
-    { label: "Kode Buku", type: "text" },
+    { label: "Nomor Hak", type: "text" },
     { label: "Nama Pemilik", type: "text" },
     { label: "Kecamatan", type: "text" },
+    { label: "Desa/Kelurahan", type: "text" },
     { label: "Jenis Buku", type: "text" },
+    { label: "Luas Tanah", type: "text" },
     { label: "Tanggal Input", type: "date" },
   ];
 
@@ -160,9 +174,12 @@ const BukuTanah = () => {
                 setIsEditMode(false);
                 setEditingId(null);
                 setFormData({
+                  nomorHak: "",
                   namaPemilik: "",
                   kecamatan: "",
+                  desaKelurahan: "",
                   jenisBuku: "",
+                  luasTanah: "",
                   tanggalInput: "",
                 });
               }
@@ -174,7 +191,7 @@ const BukuTanah = () => {
               onSubmit={handleSubmit}
               formData={formData}
               setFormData={setFormData}
-              disabledFields={isEditMode ? ["kodeBuku"] : []}
+              disabledFields={isEditMode ? ["nomorHak"] : []}
               buttonText={isEditMode ? "Update" : "Simpan"}
             />
           </Add>
@@ -183,10 +200,12 @@ const BukuTanah = () => {
       <Table
         data={bukuTanahList}
         columns={[
-          { key: "kode_buku", header: "Kode Buku" },
+          { key: "nomor_hak", header: "Nomor Hak" },
           { key: "nama_pemilik", header: "Nama Pemilik" },
           { key: "kecamatan", header: "Kecamatan" },
+          { key: "desa_kelurahan", header: "Desa/Kelurahan" },
           { key: "jenis_buku", header: "Jenis Buku" },
+          { key: "luas_tanah", header: "Luas Tanah" },
           {
             key: "tanggal_input",
             header: "Tanggal Input",
@@ -234,9 +253,9 @@ const BukuTanah = () => {
                   Konfirmasi Hapus
                 </Dialog.Title>
                 <Dialog.Description className="text-sm text-gray-600 mb-4">
-                  Apakah Anda yakin ingin menghapus buku tanah dengan kode{" "}
+                  Apakah Anda yakin ingin menghapus buku tanah dengan nomor hak{" "}
                   <span className="font-semibold text-gray-900">
-                    "{itemToDelete?.kode_buku}"
+                    "{itemToDelete?.nomor_hak}"
                   </span>
                   ? Tindakan ini tidak dapat dibatalkan.
                 </Dialog.Description>

@@ -39,10 +39,12 @@ CREATE TABLE IF NOT EXISTS `petugas` (
 -- ========================================
 CREATE TABLE IF NOT EXISTS `buku_tanah` (
   `id_buku` INT NOT NULL AUTO_INCREMENT,
-  `kode_buku` VARCHAR(50) NOT NULL UNIQUE,
+  `nomor_hak` VARCHAR(50) NOT NULL UNIQUE,
   `nama_pemilik` VARCHAR(100) DEFAULT NULL,
   `kecamatan` VARCHAR(100) DEFAULT NULL,
+  `desa_kelurahan` VARCHAR(100) DEFAULT NULL,
   `jenis_buku` VARCHAR(200) DEFAULT NULL,
+  `luas_tanah` VARCHAR(50) DEFAULT NULL,
   `tanggal_input` DATE DEFAULT NULL,
   `id_petugas` INT NOT NULL,
   `status` ENUM('tersedia', 'terpinjam') DEFAULT 'tersedia',
@@ -112,7 +114,7 @@ INSERT INTO `petugas` (`nama`, `username`, `password`, `role`, `jenis_kelamin`, 
 ('Ahmad Fauzi', 'ahmad', '$2b$10$rGfz8N7pD3m5JKqK7YJHNOqPqPvV4L5kX6hFvEZ5mEqYGZ8m4T4Tq', 'pegawai', 'Laki-laki', '081234567893', 'Jl. Gatot Subroto No. 30, Jakarta', NOW(), NOW());
 
 -- Data Buku Tanah
-INSERT INTO `buku_tanah` (`kode_buku`, `nama_pemilik`, `kecamatan`, `jenis_buku`, `tanggal_input`, `id_petugas`, `status`, `createdAt`, `updatedAt`) VALUES
+INSERT INTO `buku_tanah` (`nomor_hak`, `nama_pemilik`, `kecamatan`, `jenis_buku`, `tanggal_input`, `id_petugas`, `status`, `createdAt`, `updatedAt`) VALUES
 ('BT-001-2024', 'Andi Wijaya', 'Menteng', 'Sertifikat Hak Milik', '2024-01-15', 1, 'tersedia', NOW(), NOW()),
 ('BT-002-2024', 'Dewi Lestari', 'Kebayoran Baru', 'Sertifikat Hak Guna Bangunan', '2024-01-16', 1, 'tersedia', NOW(), NOW()),
 ('BT-003-2024', 'Rudi Hartono', 'Tebet', 'Sertifikat Hak Milik', '2024-01-17', 1, 'tersedia', NOW(), NOW()),

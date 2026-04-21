@@ -40,11 +40,40 @@ npm start
 npm run prod
 ```
 
+### Database Setup
+
+**IMPORTANT:** Setelah pull project baru atau di device baru, WAJIB jalankan:
+
+```bash
+# Setup database dengan auto-migration
+npm run setup
+```
+
+Ini akan otomatis:
+
+- ✅ Koneksi ke database
+- ✅ Sync models
+- ✅ Migrate kolom kode_buku → nomor_hak
+- ✅ Tambah kolom desa_kelurahan, luas_tanah
+- ✅ Tambah kolom role di petugas
+- ✅ Set user pertama sebagai admin
+
+Untuk production:
+
+```bash
+npm run setup:prod
+```
+
+📖 **Lihat [SETUP.md](../SETUP.md) untuk panduan lengkap setup di device baru**
+
 ### Scripts Available
 
 - `npm start` - Run dengan nodemon (development mode)
 - `npm run dev` - Run dengan nodemon (development mode)
 - `npm run prod` - Run production mode
+- `npm run setup` - Setup database dengan auto-migration (development)
+- `npm run setup:prod` - Setup database untuk production
+- `npm run migrate` - Jalankan database migrations saja
 
 ### Environment Variables
 

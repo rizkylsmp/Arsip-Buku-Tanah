@@ -72,7 +72,7 @@ const Pengembalian = () => {
           id_kembali: item.id_kembali,
           kode_pengembalian: item.kode_pengembalian,
           nama_pengembalian: item.Petugas?.nama,
-          kode_buku: item.BukuTanah?.kode_buku,
+          kode_buku: item.BukuTanah?.nomor_hak,
           nama_pemilik: item.BukuTanah?.nama_pemilik,
           tanggal_kembali: item.tanggal_kembali,
           keterangan: item.keterangan,
@@ -122,7 +122,7 @@ const Pengembalian = () => {
       type: "select",
       options: bukuTanahList.map((b) => ({
         value: b.id_buku,
-        label: `${b.kode_buku} - ${b.nama_pemilik}`,
+        label: `${b.nomor_hak} - ${b.nama_pemilik}`,
       })),
     },
     { label: "Tanggal Kembali", type: "date" },
@@ -132,7 +132,7 @@ const Pengembalian = () => {
   const columns = [
     { key: "kode_pengembalian", header: "Kode Pengembalian" },
     { key: "nama_pengembalian", header: "Nama Pengembali" },
-    { key: "kode_buku", header: "Kode Buku" },
+    { key: "kode_buku", header: "Nomor Hak" },
     { key: "nama_pemilik", header: "Nama Pemilik" },
     { key: "tanggal_kembali", header: "Tanggal Kembali" },
     { key: "keterangan", header: "Keterangan" },

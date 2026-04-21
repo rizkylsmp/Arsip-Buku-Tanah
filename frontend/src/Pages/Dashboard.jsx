@@ -43,18 +43,18 @@ const Dashboard = () => {
 
       // Calculate statistics
       const bukuTersedia = bukuData.filter(
-        (b) => b.status === "tersedia"
+        (b) => b.status === "tersedia",
       ).length;
       const bukuTerpinjam = bukuData.filter(
-        (b) => b.status === "terpinjam"
+        (b) => b.status === "terpinjam",
       ).length;
 
       // Find active peminjaman (those without pengembalian)
       const peminjamanWithPengembalian = new Set(
-        pengembalianData.map((p) => p.id_pinjam)
+        pengembalianData.map((p) => p.id_pinjam),
       );
       const peminjamanAktif = peminjamanData.filter(
-        (p) => !peminjamanWithPengembalian.has(p.id_pinjam)
+        (p) => !peminjamanWithPengembalian.has(p.id_pinjam),
       ).length;
 
       setStats({
@@ -163,11 +163,11 @@ const Dashboard = () => {
                     </p>
                     <p className="text-xs text-gray-600">
                       {item.Petugas?.nama || "-"} •{" "}
-                      {item.BukuTanah?.kode_buku || "-"}
+                      {item.BukuTanah?.nomor_hak || "-"}
                     </p>
                     <p className="text-xs text-gray-500">
                       {new Date(item.tanggal_pinjam).toLocaleDateString(
-                        "id-ID"
+                        "id-ID",
                       )}
                     </p>
                   </div>
@@ -196,11 +196,11 @@ const Dashboard = () => {
                     </p>
                     <p className="text-xs text-gray-600">
                       {item.Petugas?.nama || "-"} •{" "}
-                      {item.BukuTanah?.kode_buku || "-"}
+                      {item.BukuTanah?.nomor_hak || "-"}
                     </p>
                     <p className="text-xs text-gray-500">
                       {new Date(item.tanggal_kembali).toLocaleDateString(
-                        "id-ID"
+                        "id-ID",
                       )}
                     </p>
                   </div>
