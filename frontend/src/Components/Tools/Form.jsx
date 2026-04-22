@@ -10,7 +10,14 @@ const Form = ({
   buttonText = "Simpan",
 }) => {
   const labelToKey = (label) => {
-    const parts = label.toLowerCase().split(/\s+/);
+    const parts = label
+      .toLowerCase()
+      .trim()
+      .split(/[^a-z0-9]+/)
+      .filter(Boolean);
+
+    if (parts.length === 0) return "";
+
     return (
       parts[0] +
       parts
@@ -25,7 +32,7 @@ const Form = ({
     setFormData((prev) => ({ ...prev, [fieldKey]: e.target.value }));
   };
 
-  const renderField = (item, index) => {
+  const renderField = (item) => {
     const fieldKey = labelToKey(item.label);
     const isDisabled = disabledFields.includes(fieldKey) || item.disabled;
     const commonClasses =
@@ -112,7 +119,7 @@ const Form = ({
                 {item.label}
               </label>
             </div>
-            <div className="w-full md:w-4/5">{renderField(item, index)}</div>
+            <div className="w-full md:w-4/5">{renderField(item)}</div>
           </div>
         ))}
       </div>
