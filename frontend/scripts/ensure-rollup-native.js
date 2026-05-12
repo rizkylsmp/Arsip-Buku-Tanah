@@ -5,11 +5,15 @@ const require = createRequire(import.meta.url);
 
 const nativePackagesByPlatform = {
   "linux-x64": [
+    ["@esbuild/linux-x64", "0.25.11"],
     ["@rollup/rollup-linux-x64-gnu", "4.52.4"],
+    ["@tailwindcss/oxide-linux-x64-gnu", "4.1.14"],
     ["lightningcss-linux-x64-gnu", "1.30.1"],
   ],
   "linux-arm64": [
+    ["@esbuild/linux-arm64", "0.25.11"],
     ["@rollup/rollup-linux-arm64-gnu", "4.52.4"],
+    ["@tailwindcss/oxide-linux-arm64-gnu", "4.1.14"],
     ["lightningcss-linux-arm64-gnu", "1.30.1"],
   ],
 };
