@@ -125,7 +125,7 @@ const Form = ({
       </div>
       <button
         type="submit"
-        className="mt-6 py-3 w-full text-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold leading-none text-white shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all text-sm md:text-base"
+        className="mt-6 py-3 w-full cursor-pointer text-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold leading-none text-white shadow-md hover:shadow-lg transition-all text-sm md:text-base"
       >
         {buttonText}
       </button>

@@ -275,13 +275,13 @@ const Pengembalian = () => {
                 <div className="flex gap-3 justify-end">
                   <button
                     onClick={() => setDeleteDialogOpen(false)}
-                    className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-all"
+                    className="px-4 py-2 cursor-pointer rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-all"
                   >
                     Batal
                   </button>
                   <button
                     onClick={confirmDelete}
-                    className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-all shadow-md hover:shadow-lg"
+                    className="px-4 py-2 cursor-pointer rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-all shadow-md hover:shadow-lg"
                   >
                     Hapus
                   </button>
@@ -290,7 +290,7 @@ const Pengembalian = () => {
             </div>
             <Dialog.Close asChild>
               <button
-                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
+                className="absolute right-3 top-3 inline-flex size-[28px] cursor-pointer appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
                 aria-label="Close"
               >
                 <Cross2Icon className="w-4 h-4" />

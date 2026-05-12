@@ -113,7 +113,7 @@ const ChangePassword = ({
 
               <button
                 type="submit"
-                className="mt-6 py-3 w-full text-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold leading-none text-white shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all"
+                className="mt-6 py-3 w-full cursor-pointer text-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 font-semibold leading-none text-white shadow-md hover:shadow-lg transition-all"
               >
                 Ubah Password
               </button>
@@ -121,7 +121,7 @@ const ChangePassword = ({
 
             <Dialog.Close asChild>
               <button
-                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
+                className="absolute right-3 top-3 inline-flex size-[28px] cursor-pointer appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
                 aria-label="Close"
               >
                 <Cross2Icon className="w-4 h-4" />
@@ -150,7 +150,7 @@ const ChangePassword = ({
                 <div className="flex justify-end">
                   <button
                     onClick={() => setErrorDialogOpen(false)}
-                    className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all shadow-md hover:shadow-lg"
+                    className="px-4 py-2 cursor-pointer rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium transition-all shadow-md hover:shadow-lg"
                   >
                     OK
                   </button>
@@ -159,7 +159,7 @@ const ChangePassword = ({
             </div>
             <Dialog.Close asChild>
               <button
-                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
+                className="absolute right-3 top-3 inline-flex size-[28px] cursor-pointer appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all"
                 aria-label="Close"
               >
                 <Cross2Icon className="w-4 h-4" />

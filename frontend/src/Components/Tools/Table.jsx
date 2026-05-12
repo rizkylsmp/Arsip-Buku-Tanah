@@ -1,10 +1,15 @@
 import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
-import { Button, IconButton } from "@radix-ui/themes";
-import React, { useState, useMemo } from "react";
+  ArrowLeft,
+  ArrowRight,
+  CaretDown,
+  CaretUp,
+  FunnelX,
+  LockKey,
+  MagnifyingGlass,
+  PencilSimple,
+  Trash,
+} from "@phosphor-icons/react";
+import React, { useEffect, useState, useMemo } from "react";
 import { MoonLoader } from "react-spinners";
 
 const Table = ({
@@ -87,27 +92,59 @@ const Table = ({
     }
 
     return result;
-  }, [data, columnFilters, searchText, sortConfig]);
+  }, [data, columns, columnFilters, searchText, sortConfig]);
 
   // Pagination
-  const totalPages = Math.ceil(filteredAndSortedData.length / rowsPerPage);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredAndSortedData.length / rowsPerPage)
+  );
   const paginatedData = filteredAndSortedData.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+  const paginationItems = useMemo(() => {
+    if (totalPages <= 7) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
+
+    const pages = new Set([1, totalPages, currentPage]);
+    for (let page = currentPage - 1; page <= currentPage + 1; page += 1) {
+      if (page > 1 && page < totalPages) pages.add(page);
+    }
+
+    const sortedPages = [...pages].sort((a, b) => a - b);
+    return sortedPages.flatMap((page, index) => {
+      const previous = sortedPages[index - 1];
+      if (index > 0 && page - previous > 1) {
+        return [`ellipsis-${previous}-${page}`, page];
+      }
+      return [page];
+    });
+  }, [currentPage, totalPages]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   return (
     <div className="w-full p-3 md:p-5">
       {/* Global Search */}
-      <div className="mb-6 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4 shadow-sm border border-slate-200">
+      <div className="mb-5 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4 shadow-sm border border-slate-200/80">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full sm:w-auto">
             <div className="relative flex items-center w-full sm:w-auto">
-              <MagnifyingGlassIcon className="absolute left-3 w-5 h-5 text-blue-600" />
+              <MagnifyingGlass
+                size={20}
+                weight="bold"
+                className="absolute left-3 text-blue-600"
+              />
               <input
                 type="text"
                 placeholder="Cari di semua kolom..."
-                className="pl-10 pr-4 py-2.5 border-2 border-slate-200 rounded-lg w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 shadow-sm transition-all bg-white"
+                className="pl-10 pr-4 py-2.5 border border-slate-200 rounded-lg w-full sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400 shadow-sm transition-all bg-white text-sm"
                 value={searchText}
                 onChange={(e) => handleGlobalSearch(e.target.value)}
               />
@@ -115,13 +152,9 @@ const Table = ({
             <button
               type="button"
               onClick={resetFilters}
-              className="px-4 py-2.5 text-sm bg-white border-2 border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 whitespace-nowrap transition-all shadow-sm flex items-center gap-2 font-medium"
+              className="px-4 py-2.5 cursor-pointer text-sm bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:border-gray-300 whitespace-nowrap transition-all shadow-sm flex items-center gap-2 font-medium text-gray-700"
             >
-              <img
-                src="https://www.svgrepo.com/show/340305/filter-reset.svg"
-                alt=""
-                className="w-4 h-4"
-              />
+              <FunnelX size={17} weight="bold" />
               Reset
             </button>
           </div>
@@ -132,7 +165,7 @@ const Table = ({
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto relative rounded-xl border-2 border-gray-200 shadow-lg scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+      <div className="overflow-x-auto relative rounded-xl border border-gray-200 shadow-md scrollbar-thin scrollbar-thumb-blue-400 scrollbar-track-gray-100">
         {loading && (
           <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex items-center justify-center z-10 rounded-xl">
             <div className="flex flex-col items-center gap-3 p-10">
@@ -147,24 +180,25 @@ const Table = ({
               {columns.map((column) => (
                 <th
                   key={column.key}
-                  className="px-6 py-4 border-b-2 border-blue-200 min-w-[180px]"
+                  className="px-5 py-3 border-b border-blue-100 min-w-[180px]"
                 >
                   <div className="flex flex-col justify-between gap-2">
                     <div
-                      className="flex items-center cursor-pointer text-sm md:text-base whitespace-nowrap font-semibold text-gray-700 hover:text-blue-600 transition-colors"
+                      className="flex items-center gap-1.5 cursor-pointer text-sm whitespace-nowrap font-semibold text-gray-700 hover:text-blue-600 transition-colors"
                       onClick={() => handleSort(column.key)}
                     >
                       {column.header}
-                      {sortConfig.key === column.key && (
-                        <span className="ml-2 text-blue-600 font-bold">
-                          {sortConfig.direction === "asc" ? "↑" : "↓"}
-                        </span>
-                      )}
+                      {sortConfig.key === column.key &&
+                        (sortConfig.direction === "asc" ? (
+                          <CaretUp size={14} weight="bold" className="text-blue-600" />
+                        ) : (
+                          <CaretDown size={14} weight="bold" className="text-blue-600" />
+                        ))}
                     </div>
                     <input
                       type="text"
                       placeholder={`Filter ${column.header}...`}
-                      className="px-3 py-1.5 text-xs border-2 border-blue-300 font-normal focus:ring-2 focus:ring-blue-400 focus:outline-none focus:border-blue-400 rounded-md w-full bg-white/95 text-gray-800 placeholder-gray-500"
+                      className="px-3 py-1.5 text-xs border border-blue-100 font-normal focus:ring-2 focus:ring-blue-100 focus:outline-none focus:border-blue-300 rounded-md w-full bg-white/95 text-gray-800 placeholder-gray-400"
                       onChange={(e) =>
                         handleColumnFilter(column.key, e.target.value)
                       }
@@ -174,8 +208,8 @@ const Table = ({
                 </th>
               ))}
               {(onEdit || onDelete || onChangePassword) && (
-                <th className="px-6 py-4 border-b-2 border-blue-200 min-w-[150px]">
-                  <div className="flex items-center justify-center text-sm md:text-base font-semibold text-gray-700">
+                <th className="px-5 py-3 border-b border-blue-100 min-w-[140px]">
+                  <div className="flex items-center justify-center text-sm font-semibold text-gray-700">
                     Aksi
                   </div>
                 </th>
@@ -186,68 +220,49 @@ const Table = ({
             {paginatedData.map((row, index) => (
               <tr
                 key={index}
-                className={`transition-colors border-b border-gray-200 hover:bg-blue-50 ${
-                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                className={`transition-colors border-b border-gray-100 last:border-b-0 hover:bg-blue-50/70 ${
+                  index % 2 === 0 ? "bg-white" : "bg-slate-50/50"
                 }`}
               >
                 {columns.map((column) => (
                   <td
                     key={column.key}
-                    className="px-6 py-4 text-sm md:text-base text-gray-700 min-w-[180px]"
+                    className="px-5 py-3.5 text-sm text-gray-700 min-w-[180px]"
                   >
                     {column.render ? column.render(row) : row[column.key]}
                   </td>
                 ))}
                 {(onEdit || onDelete || onChangePassword) && (
-                  <td className="px-6 py-4 min-w-[150px]">
+                  <td className="px-5 py-3.5 min-w-[140px]">
                     <div className="flex gap-2 items-center justify-center">
                       {onEdit && (
                         <button
                           type="button"
                           onClick={() => onEdit(row)}
-                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-blue-500 hover:bg-blue-600 text-white transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                          className="inline-flex items-center justify-center h-8 w-8 cursor-pointer rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-100 transition-all"
                           title="Edit"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z" />
-                            <path d="M20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z" />
-                          </svg>
+                          <PencilSimple size={17} weight="bold" />
                         </button>
                       )}
                       {onChangePassword && (
                         <button
                           type="button"
                           onClick={() => onChangePassword(row)}
-                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                          className="inline-flex items-center justify-center h-8 w-8 cursor-pointer rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-100 transition-all"
                           title="Ubah Password"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM9 8V6c0-1.66 1.34-3 3-3s3 1.34 3 3v2H9z" />
-                          </svg>
+                          <LockKey size={17} weight="bold" />
                         </button>
                       )}
                       {onDelete && (
                         <button
                           type="button"
                           onClick={() => onDelete(row)}
-                          className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+                          className="inline-flex items-center justify-center h-8 w-8 cursor-pointer rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-100 transition-all"
                           title="Delete"
                         >
-                          <svg
-                            className="w-4 h-4"
-                            fill="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-9l-1 1H5v2h14V4z" />
-                          </svg>
+                          <Trash size={17} weight="bold" />
                         </button>
                       )}
                     </div>
@@ -260,39 +275,49 @@ const Table = ({
       </div>
 
       {/* Pagination */}
-      <div className="mt-6 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4 border border-slate-200">
-        <div className="flex gap-2 items-center">
-          <IconButton
-            className="px-3 py-2 border-2 border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-100 hover:border-blue-400 transition-all shadow-sm"
+      <div className="mt-5 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gradient-to-r from-slate-50 to-blue-50 rounded-xl p-4 border border-slate-200/80">
+        <div className="flex gap-1.5 items-center overflow-x-auto max-w-full">
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center border border-gray-200 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed bg-white hover:bg-blue-50 hover:border-blue-200 transition-all shadow-sm"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            <ChevronLeftIcon className="w-5 h-5" />
-          </IconButton>
-          <div className="flex items-center gap-1">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                className={`px-4 py-2 rounded-lg font-semibold transition-all shadow-sm ${
-                  currentPage === page
-                    ? "bg-blue-600 text-white border-2 border-blue-500 shadow-md"
-                    : "bg-white text-gray-700 border-2 border-gray-300 hover:bg-blue-50 hover:border-blue-400"
-                }`}
-                onClick={() => setCurrentPage(page)}
+            <ArrowLeft size={18} weight="bold" />
+          </button>
+          {paginationItems.map((item) =>
+            typeof item === "string" ? (
+              <span
+                key={item}
+                className="inline-flex h-9 min-w-8 shrink-0 items-center justify-center px-1 text-sm font-semibold text-gray-400"
               >
-                {page}
-              </Button>
-            ))}
-          </div>
-          <IconButton
-            className="px-3 py-2 border-2 border-gray-300 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-100 hover:border-blue-400 transition-all shadow-sm"
+                ...
+              </span>
+            ) : (
+              <button
+                key={item}
+                type="button"
+                className={`inline-flex h-9 min-w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg px-3 text-sm font-semibold transition-all shadow-sm ${
+                  currentPage === item
+                    ? "bg-blue-600 text-white border border-blue-600 shadow-md"
+                    : "bg-white text-gray-700 border border-gray-200 hover:bg-blue-50 hover:border-blue-200"
+                }`}
+                onClick={() => setCurrentPage(item)}
+              >
+                {item}
+              </button>
+            )
+          )}
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center border border-gray-200 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed bg-white hover:bg-blue-50 hover:border-blue-200 transition-all shadow-sm"
             onClick={() =>
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             disabled={currentPage === totalPages}
           >
-            <ChevronRightIcon className="w-5 h-5" />
-          </IconButton>
+            <ArrowRight size={18} weight="bold" />
+          </button>
         </div>
         <div className="text-sm font-medium text-gray-700 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
           Halaman {currentPage} dari {totalPages}

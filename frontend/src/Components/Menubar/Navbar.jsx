@@ -1,12 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import { List, SignOut } from "@phosphor-icons/react";
 
 const Navbar = () => {
   const [user, setUser] = React.useState(
     JSON.parse(localStorage.getItem("profile"))
   );
-  const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -30,10 +29,10 @@ const Navbar = () => {
       {/* Mobile Menu Toggle */}
       <button
         onClick={toggleSidebar}
-        className="md:hidden p-2.5 hover:bg-blue-100 rounded-lg transition-all relative z-10 border border-gray-200 shadow-sm"
+        className="md:hidden p-2.5 cursor-pointer hover:bg-blue-100 rounded-lg transition-all relative z-10 border border-gray-200 shadow-sm"
         aria-label="Toggle Menu"
       >
-        <HamburgerMenuIcon className="w-6 h-6 text-blue-600" />
+        <List size={24} weight="bold" className="text-blue-600" />
       </button>
 
       {/* Spacer for desktop */}
@@ -57,15 +56,16 @@ const Navbar = () => {
           </div>
           <button
             onClick={handleLogout}
-            className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl text-white text-xs md:text-sm px-4 py-2.5 cursor-pointer transition-all shadow-md hover:shadow-lg transform hover:scale-105 font-semibold"
+            className="inline-flex items-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 rounded-xl text-white text-xs md:text-sm px-4 py-2.5 cursor-pointer transition-all shadow-md hover:shadow-lg font-semibold"
           >
+            <SignOut size={17} weight="bold" />
             LOGOUT
           </button>
         </div>
       ) : (
         <Link
           to="/auth"
-          className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg transform hover:scale-105"
+          className="cursor-pointer bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-md hover:shadow-lg"
         >
           LOGIN
         </Link>

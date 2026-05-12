@@ -5,6 +5,12 @@ import { getPeminjaman } from "../api/peminjamanApi";
 import { getPengembalian } from "../api/pengembalianApi";
 import { getPetugas } from "../api/petugasApi";
 import { MoonLoader } from "react-spinners";
+import {
+  Books,
+  PaperPlaneTilt,
+  TrayArrowDown,
+  UsersThree,
+} from "@phosphor-icons/react";
 
 const Dashboard = () => {
   const [stats, setStats] = React.useState({
@@ -77,7 +83,7 @@ const Dashboard = () => {
     }
   };
 
-  const StatCard = ({ title, value, subtitle, icon, color }) => (
+  const StatCard = ({ title, value, subtitle, Icon, color, iconColor }) => (
     <div
       className={`bg-white rounded-lg shadow-md p-4 md:p-6 border-l-4 ${color}`}
     >
@@ -89,7 +95,11 @@ const Dashboard = () => {
           <p className="text-2xl md:text-3xl font-bold mt-1 md:mt-2">{value}</p>
           {subtitle && <p className="text-xs text-gray-500 mt-1">{subtitle}</p>}
         </div>
-        <div className="text-3xl md:text-4xl opacity-20">{icon}</div>
+        <Icon
+          size={42}
+          weight="duotone"
+          className={`${iconColor} opacity-30 flex-shrink-0`}
+        />
       </div>
     </div>
   );
@@ -117,29 +127,33 @@ const Dashboard = () => {
             title="Total Buku Tanah"
             value={stats.totalBuku}
             subtitle={`${stats.bukuTersedia} tersedia, ${stats.bukuTerpinjam} dipinjam`}
-            icon="📚"
+            Icon={Books}
             color="border-blue-500"
+            iconColor="text-blue-600"
           />
           <StatCard
             title="Peminjaman Aktif"
             value={stats.peminjamanAktif}
             subtitle={`dari ${stats.totalPeminjaman} total peminjaman`}
-            icon="📤"
+            Icon={PaperPlaneTilt}
             color="border-yellow-500"
+            iconColor="text-yellow-600"
           />
           <StatCard
             title="Total Pengembalian"
             value={stats.totalPengembalian}
             subtitle="Buku yang sudah dikembalikan"
-            icon="📥"
+            Icon={TrayArrowDown}
             color="border-green-500"
+            iconColor="text-green-600"
           />
           <StatCard
             title="Total Petugas"
             value={stats.totalPetugas}
             subtitle="Petugas aktif"
-            icon="👥"
+            Icon={UsersThree}
             color="border-purple-500"
+            iconColor="text-purple-600"
           />
         </div>
 
@@ -148,7 +162,11 @@ const Dashboard = () => {
           {/* Recent Peminjaman */}
           <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
             <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center">
-              <span className="mr-2">📤</span>
+              <PaperPlaneTilt
+                size={21}
+                weight="duotone"
+                className="mr-2 text-yellow-600"
+              />
               Peminjaman Terbaru
             </h3>
             {recentPeminjaman.length > 0 ? (
@@ -181,7 +199,11 @@ const Dashboard = () => {
           {/* Recent Pengembalian */}
           <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
             <h3 className="text-base md:text-lg font-semibold mb-3 md:mb-4 flex items-center">
-              <span className="mr-2">📥</span>
+              <TrayArrowDown
+                size={21}
+                weight="duotone"
+                className="mr-2 text-green-600"
+              />
               Pengembalian Terbaru
             </h3>
             {recentPengembalian.length > 0 ? (

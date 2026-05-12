@@ -1,13 +1,13 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  ArchiveIcon,
-  HomeIcon,
-  PersonIcon,
-  FileTextIcon,
-  PaperPlaneIcon,
-  HamburgerMenuIcon,
-} from "@radix-ui/react-icons";
+  Books,
+  House,
+  List,
+  PaperPlaneTilt,
+  TrayArrowDown,
+  UsersThree,
+} from "@phosphor-icons/react";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -18,15 +18,15 @@ const Sidebar = () => {
   const userRole = profile?.result?.role || "pegawai";
 
   const menu = [
-    { name: "Dashboard", link: "/", icon: "🏠" },
-    { name: "Data Buku Tanah", link: "/buku-tanah", icon: "📚" },
-    { name: "Data Peminjaman", link: "/peminjaman", icon: "📤" },
+    { name: "Dashboard", link: "/", icon: House },
+    { name: "Data Buku Tanah", link: "/buku-tanah", icon: Books },
+    { name: "Data Peminjaman", link: "/peminjaman", icon: PaperPlaneTilt },
     {
       name: "Data Pengembalian",
       link: "/pengembalian",
-      icon: "📥",
+      icon: TrayArrowDown,
     },
-    { name: "Data Petugas", link: "/petugas", icon: "👥", adminOnly: true },
+    { name: "Data Petugas", link: "/petugas", icon: UsersThree, adminOnly: true },
   ];
 
   const isActive = (link) => {
@@ -71,7 +71,7 @@ const Sidebar = () => {
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 cursor-pointer bg-black/50 backdrop-blur-sm z-40 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
@@ -102,12 +102,12 @@ const Sidebar = () => {
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`hidden md:block p-2.5 bg-blue-100 hover:bg-blue-200 rounded-lg transition-all border border-blue-200 shadow-md ${
+            className={`hidden md:block p-2.5 cursor-pointer bg-blue-100 hover:bg-blue-200 rounded-lg transition-all border border-blue-200 shadow-md ${
               !isOpen ? "mx-auto" : ""
             }`}
             title={isOpen ? "Tutup Sidebar" : "Buka Sidebar"}
           >
-            <HamburgerMenuIcon className="w-5 h-5 text-blue-700" />
+            <List size={20} weight="bold" className="text-blue-700" />
           </button>
         </div>
 
@@ -115,35 +115,38 @@ const Sidebar = () => {
         <div className="flex flex-col gap-3 relative z-10">
           {menu
             .filter((item) => !item.adminOnly || userRole === "admin")
-            .map((item) => (
-              <Link
-                key={item.name}
-                to={item.link}
-                onClick={() => {
-                  // Only close sidebar on mobile (< 768px)
-                  if (window.innerWidth < 768) {
-                    setIsOpen(false);
-                  }
-                }}
-                className={`group px-4 cursor-pointer rounded-xl flex gap-3 items-center transition-all transform ${
-                  isActive(item.link)
-                    ? "bg-blue-600 text-white font-semibold shadow-lg scale-105"
-                    : "text-gray-700 hover:bg-blue-100 border border-transparent hover:border-blue-200"
-                } ${!isOpen ? "md:justify-center py-1" : "py-2"}`}
-                title={!isOpen ? item.name : ""}
-              >
-                <span className="flex-shrink-0 group-hover:scale-110 transition-transform">
-                  {item.icon}
-                </span>
-                <span
-                  className={`whitespace-nowrap ${
-                    !isOpen ? "md:hidden" : "md:text-md text-sm"
-                  }`}
+            .map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.name}
+                  to={item.link}
+                  onClick={() => {
+                    // Only close sidebar on mobile (< 768px)
+                    if (window.innerWidth < 768) {
+                      setIsOpen(false);
+                    }
+                  }}
+                  className={`group px-4 cursor-pointer rounded-xl flex gap-3 items-center transition-all ${
+                    isActive(item.link)
+                      ? "bg-blue-600 text-white font-semibold shadow-lg"
+                      : "text-gray-700 hover:bg-blue-100 border border-transparent hover:border-blue-200"
+                  } ${!isOpen ? "md:justify-center py-1" : "py-2"}`}
+                  title={!isOpen ? item.name : ""}
                 >
-                  {item.name}
-                </span>
-              </Link>
-            ))}
+                  <span className="flex-shrink-0">
+                    <Icon size={22} weight={isActive(item.link) ? "fill" : "duotone"} />
+                  </span>
+                  <span
+                    className={`whitespace-nowrap ${
+                      !isOpen ? "md:hidden" : "md:text-md text-sm"
+                    }`}
+                  >
+                    {item.name}
+                  </span>
+                </Link>
+              );
+            })}
         </div>
       </div>
     </>

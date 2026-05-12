@@ -373,7 +373,7 @@ const Auth = () => {
         <button
           type="submit"
           disabled={loading}
-          className="mt-2 h-12 w-full rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold text-base shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-lg disabled:active:scale-100 flex items-center justify-center gap-2"
+          className="mt-2 h-12 w-full cursor-pointer rounded-lg bg-gradient-to-r from-blue-600 to-blue-500 text-white font-semibold text-base shadow-lg hover:shadow-xl hover:from-blue-700 hover:to-blue-600 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-lg flex items-center justify-center gap-2"
         >
           {loading ? (
             <>
@@ -397,7 +397,7 @@ const Auth = () => {
         <button
           type="button"
           onClick={() => setIsSignUp(!isSignUp)}
-          className="w-full h-11 rounded-lg border-2 border-blue-500 text-blue-600 font-semibold text-base hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+          className="w-full h-11 cursor-pointer rounded-lg border-2 border-blue-500 text-blue-600 font-semibold text-base hover:bg-blue-50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
         >
           {isSignUp ? "Login" : "Register"}
         </button>
@@ -438,7 +438,7 @@ const Auth = () => {
             <div className="mt-6 flex justify-end">
               <Dialog.Close asChild>
                 <button
-                  className={`px-6 py-2.5 rounded-lg font-semibold text-sm transition-all ${
+                  className={`px-6 py-2.5 cursor-pointer rounded-lg font-semibold text-sm transition-all ${
                     dialogContent.type === "error"
                       ? "bg-red-600 hover:bg-red-700 text-white"
                       : "bg-green-600 hover:bg-green-700 text-white"
@@ -454,7 +454,7 @@ const Auth = () => {
             </div>
             <Dialog.Close asChild>
               <button
-                className="absolute right-4 top-4 inline-flex h-6 w-6 items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none"
+                className="absolute right-4 top-4 inline-flex h-6 w-6 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus:outline-none"
                 aria-label="Close"
               >
                 <Cross2Icon className="w-4 h-4" />

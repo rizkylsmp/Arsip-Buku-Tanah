@@ -8,7 +8,7 @@ const Add = ({ textButton = "", title = "", children, open, onOpenChange }) => {
       {/* support controlled open state via `open` and `onOpenChange` props */}
       <Dialog.Root open={open} onOpenChange={onOpenChange}>
         <Dialog.Trigger asChild>
-          <button className="inline-flex h-[38px] gap-2 cursor-pointer items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 md:px-5 text-sm md:text-base font-semibold leading-none outline-none shadow-md hover:shadow-lg transform hover:scale-105 transition-all select-none">
+          <button className="inline-flex h-[38px] gap-2 cursor-pointer items-center justify-center rounded-lg bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-4 md:px-5 text-sm md:text-base font-semibold leading-none outline-none shadow-md hover:shadow-lg transition-all select-none">
             <PlusCircledIcon className="w-4 h-4" />
             <span className="hidden sm:inline">{textButton}</span>
           </button>
@@ -29,7 +29,7 @@ const Add = ({ textButton = "", title = "", children, open, onOpenChange }) => {
             {children}
             <Dialog.Close asChild>
               <button
-                className="absolute right-3 top-3 inline-flex size-[28px] appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="absolute right-3 top-3 inline-flex size-[28px] cursor-pointer appearance-none items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-800 transition-all shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400"
                 aria-label="Close"
               >
                 <Cross2Icon className="w-4 h-4" />
