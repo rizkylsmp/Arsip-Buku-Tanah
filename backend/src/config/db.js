@@ -1,4 +1,5 @@
 import { Sequelize } from "sequelize";
+import mysql2 from "mysql2";
 import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -33,6 +34,7 @@ export const sequelize = new Sequelize(
     host: process.env.DB_HOST || "localhost",
     port: Number(process.env.DB_PORT || 3306),
     dialect: "mysql",
+    dialectModule: mysql2,
     logging: false,
     pool: {
       max: Number(process.env.DB_POOL_MAX || 2),

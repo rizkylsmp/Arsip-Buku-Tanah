@@ -6,6 +6,9 @@
     "frontend",
     "backend"
   ],
+  "dependencies": {
+    "mysql2": "^3.15.2"
+  },
   "scripts": {
     "build": "npm --workspace frontend run build",
     "vercel-build": "npm --workspace frontend run build && node scripts/sync-vercel-output.js",
