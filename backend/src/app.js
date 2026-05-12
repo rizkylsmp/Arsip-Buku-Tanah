@@ -11,9 +11,10 @@ import PeminjamanRoute from "./routes/PeminjamanRoute.js";
 import PengembalianRoute from "./routes/PengembalianRoute.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const envFile = process.env.NODE_ENV === "production"
-  ? ".env.production"
-  : ".env.development";
+const envFile =
+  process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development";
 
 dotenv.config({
   path: path.resolve(__dirname, "../", envFile),
@@ -29,6 +30,7 @@ const allowedOrigins = [
   "http://localhost:3000",
   "https://arsip-buku-tanah.vercel.app",
   "https://arsip-buku-tanah-production.up.railway.app",
+  "https://sibt-web.vercel.app",
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
   process.env.FRONTEND_URL,
 ].filter(Boolean);
