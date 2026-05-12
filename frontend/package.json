@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/ensure-rollup-native.js",
-    "build": "vite build",
+    "build": "node scripts/ensure-rollup-native.js && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
