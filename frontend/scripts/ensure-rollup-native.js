@@ -17,7 +17,7 @@ if (packageName) {
     console.log(`Installing missing Rollup optional dependency: ${packageName}`);
     execFileSync(
       "npm",
-      ["install", "--include=optional", "--no-audit", "--no-fund"],
+      ["install", `${packageName}@4.52.4`, "--no-save", "--no-audit", "--no-fund"],
       { stdio: "inherit" },
     );
   }
