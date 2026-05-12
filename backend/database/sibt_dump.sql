@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS `petugas` (
 -- ========================================
 CREATE TABLE IF NOT EXISTS `buku_tanah` (
   `id_buku` INT NOT NULL AUTO_INCREMENT,
-  `nomor_hak` VARCHAR(50) NOT NULL UNIQUE,
+  `nomor_hak` VARCHAR(50) NOT NULL,
   `nama_pemilik` VARCHAR(100) DEFAULT NULL,
   `kecamatan` VARCHAR(100) DEFAULT NULL,
   `desa_kelurahan` VARCHAR(100) DEFAULT NULL,

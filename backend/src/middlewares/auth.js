@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { Petugas } from "../models/Petugas.js";
-dotenv.config();
+dotenv.config({ quiet: process.env.NODE_ENV === "production" });
 
 export function authenticate(req, res, next) {
   const authHeader = req.headers.authorization;

@@ -161,12 +161,6 @@ export const createBuku = async (req, res) => {
     const idPetugas = req.user?.id;
     if (!idPetugas) return res.status(401).json({ error: "Unauthorized" });
 
-    // Check if nomor_hak already exists
-    const existing = await BukuTanah.findOne({ where: { nomor_hak } });
-    if (existing) {
-      return res.status(400).json({ error: "Nomor Hak sudah ada" });
-    }
-
     const buku = await BukuTanah.create({
       nomor_hak,
       nama_pemilik,
@@ -196,8 +190,8 @@ export const updateBuku = async (req, res) => {
     if (!buku) return res.status(404).json({ error: "Buku not found" });
 
     // Handle both camelCase and snake_case from frontend
-    // Note: DO NOT update nomor_hak (it's unique and disabled in edit form)
     const updates = {
+      nomor_hak: req.body.nomor_hak || req.body.nomorHak,
       nama_pemilik: req.body.nama_pemilik || req.body.namaPemilik,
       kecamatan: req.body.kecamatan,
       desa_kelurahan: req.body.desa_kelurahan || req.body.desaKelurahan,

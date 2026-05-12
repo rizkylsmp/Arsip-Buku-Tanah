@@ -34,12 +34,29 @@ async function setupDatabase() {
     if (hasKodeBuku && !hasNomorHak) {
       console.log("  ➕ Renaming kode_buku to nomor_hak...");
       await sequelize.query(
-        `ALTER TABLE buku_tanah CHANGE COLUMN kode_buku nomor_hak VARCHAR(50) NOT NULL UNIQUE`,
+        `ALTER TABLE buku_tanah CHANGE COLUMN kode_buku nomor_hak VARCHAR(50) NOT NULL`,
       );
       console.log("  ✅ Column renamed");
       migrationsDone.push("kode_buku → nomor_hak");
     } else if (hasNomorHak) {
       console.log("  ✓ nomor_hak column already exists");
+    }
+
+    if (hasNomorHak || hasKodeBuku) {
+      const nomorHakIndexes = await sequelize.query(
+        `SHOW INDEX FROM buku_tanah WHERE Column_name = 'nomor_hak' AND Non_unique = 0`,
+        { type: QueryTypes.SELECT },
+      );
+
+      for (const index of nomorHakIndexes) {
+        if (index.Key_name === "PRIMARY") continue;
+
+        console.log(`  ➖ Dropping unique index ${index.Key_name} from nomor_hak...`);
+        await sequelize.query(
+          `ALTER TABLE buku_tanah DROP INDEX \`${index.Key_name}\``,
+        );
+        migrationsDone.push(`remove unique index ${index.Key_name} from nomor_hak`);
+      }
     }
 
     // 3b. Add desa_kelurahan column

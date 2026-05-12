@@ -207,7 +207,7 @@ npm run dev
 | Kolom              | Tipe                          | Keterangan                  |
 | ------------------ | ----------------------------- | --------------------------- |
 | id_buku            | INT                           | Primary Key, Auto Increment |
-| **nomor_hak**      | VARCHAR(50)                   | UNIQUE, Required            |
+| **nomor_hak**      | VARCHAR(50)                   | Required                    |
 | nama_pemilik       | VARCHAR(100)                  |                             |
 | kecamatan          | VARCHAR(100)                  |                             |
 | **desa_kelurahan** | VARCHAR(100)                  | NEW - Tempat tanah berada   |

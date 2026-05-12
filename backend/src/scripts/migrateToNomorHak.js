@@ -22,7 +22,7 @@ async function migrateToNomorHak() {
     if (hasKodeBuku && !hasNomorHak) {
       console.log("➕ Renaming kode_buku to nomor_hak...");
       await sequelize.query(
-        `ALTER TABLE buku_tanah CHANGE COLUMN kode_buku nomor_hak VARCHAR(50) NOT NULL UNIQUE`,
+        `ALTER TABLE buku_tanah CHANGE COLUMN kode_buku nomor_hak VARCHAR(50) NOT NULL`,
       );
       console.log("✅ Column renamed successfully!\n");
     } else if (hasNomorHak) {

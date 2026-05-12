@@ -94,8 +94,8 @@ const BukuTanah = () => {
     event.preventDefault();
     try {
       if (isEditMode && editingId) {
-        // Update mode - DO NOT send nomor_hak (it's unique and disabled)
         const response = await updateBukuTanah(editingId, {
+          nomor_hak: formData.nomorHak,
           nama_pemilik: formData.namaPemilik,
           kecamatan: formData.kecamatan,
           desa_kelurahan: formData.desaKelurahan,
@@ -191,7 +191,6 @@ const BukuTanah = () => {
               onSubmit={handleSubmit}
               formData={formData}
               setFormData={setFormData}
-              disabledFields={isEditMode ? ["nomorHak"] : []}
               buttonText={isEditMode ? "Update" : "Simpan"}
             />
           </Add>

@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Petugas } from "../models/Petugas.js";
 import dotenv from "dotenv";
-dotenv.config();
+dotenv.config({ quiet: process.env.NODE_ENV === "production" });
 
 export const register = async (req, res) => {
   const {

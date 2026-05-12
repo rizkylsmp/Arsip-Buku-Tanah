@@ -6,7 +6,7 @@ export const BukuTanah = sequelize.define(
   "BukuTanah",
   {
     id_buku: { type: DataTypes.INTEGER, autoIncrement: true, primaryKey: true },
-    nomor_hak: { type: DataTypes.STRING(50), allowNull: false, unique: true },
+    nomor_hak: { type: DataTypes.STRING(50), allowNull: false },
     nama_pemilik: { type: DataTypes.STRING(100) },
     kecamatan: { type: DataTypes.STRING(100) },
     desa_kelurahan: { type: DataTypes.STRING(100) },
