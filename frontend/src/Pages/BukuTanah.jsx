@@ -14,18 +14,18 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
 const KUDUS_KECAMATAN_OPTIONS = [
-  { value: "Kaliwungu", label: "Kaliwungu" },
-  { value: "Kota Kudus", label: "Kota Kudus" },
-  { value: "Jati", label: "Jati" },
-  { value: "Undaan", label: "Undaan" },
-  { value: "Mejobo", label: "Mejobo" },
-  { value: "Jekulo", label: "Jekulo" },
-  { value: "Bae", label: "Bae" },
-  { value: "Gebog", label: "Gebog" },
-  { value: "Dawe", label: "Dawe" },
+  { value: "KALIWUNGU", label: "KALIWUNGU" },
+  { value: "KOTA KUDUS", label: "KOTA KUDUS" },
+  { value: "JATI", label: "JATI" },
+  { value: "UNDAAN", label: "UNDAAN" },
+  { value: "MEJOBO", label: "MEJOBO" },
+  { value: "JEKULO", label: "JEKULO" },
+  { value: "BAE", label: "BAE" },
+  { value: "GEBOG", label: "GEBOG" },
+  { value: "DAWE", label: "DAWE" },
 ];
 
-const KUDUS_DESA_KELURAHAN_OPTIONS = [
+const KUDUS_DESA_KELURAHAN_SOURCE = [
   { value: "Bakalankrapyak", label: "Bakalankrapyak - Kaliwungu" },
   { value: "Prambatan Kidul", label: "Prambatan Kidul - Kaliwungu" },
   { value: "Prambatan Lor", label: "Prambatan Lor - Kaliwungu" },
@@ -160,6 +160,29 @@ const KUDUS_DESA_KELURAHAN_OPTIONS = [
   { value: "Colo", label: "Colo - Dawe" },
 ];
 
+const getUpperOption = (value) => {
+  const upperValue = value.toUpperCase();
+  return { value: upperValue, label: upperValue };
+};
+
+const KUDUS_DESA_BY_KECAMATAN = KUDUS_DESA_KELURAHAN_SOURCE.reduce(
+  (acc, item) => {
+    const [, kecamatan = ""] = item.label.split(" - ");
+    const kecamatanKey = kecamatan.toUpperCase();
+
+    return {
+      ...acc,
+      [kecamatanKey]: [...(acc[kecamatanKey] || []), item.value.toUpperCase()],
+    };
+  },
+  {}
+);
+
+const getDesaKelurahanOptions = (kecamatan) =>
+  (KUDUS_DESA_BY_KECAMATAN[kecamatan] || []).map(getUpperOption);
+
+const normalizeUpper = (value) => (value || "").toUpperCase();
+
 const BukuTanah = () => {
   const [formData, setFormData] = React.useState({
     nomorHak: "",
@@ -190,8 +213,8 @@ const BukuTanah = () => {
     setFormData({
       nomorHak: row.nomor_hak || "",
       namaPemilik: row.nama_pemilik || "",
-      kecamatan: row.kecamatan || "",
-      desaKelurahan: row.desa_kelurahan || "",
+      kecamatan: normalizeUpper(row.kecamatan),
+      desaKelurahan: normalizeUpper(row.desa_kelurahan),
       jenisBuku: row.jenis_buku || "",
       luasTanah: row.luas_tanah || "",
       tanggalInput: row.tanggal_input ? row.tanggal_input.split("T")[0] : "",
@@ -305,11 +328,16 @@ const BukuTanah = () => {
       label: "Kecamatan",
       type: "select",
       options: KUDUS_KECAMATAN_OPTIONS,
+      resetFieldsOnChange: ["desaKelurahan"],
     },
     {
       label: "Desa/Kelurahan",
       type: "select",
-      options: KUDUS_DESA_KELURAHAN_OPTIONS,
+      options: getDesaKelurahanOptions(formData.kecamatan),
+      disabled: !formData.kecamatan,
+      placeholder: formData.kecamatan
+        ? "Pilih Desa/Kelurahan"
+        : "Pilih Kecamatan terlebih dahulu",
     },
     { label: "Jenis Buku", type: "text" },
     { label: "Luas Tanah", type: "text" },
@@ -360,11 +388,16 @@ const BukuTanah = () => {
             key: "kecamatan",
             header: "Kecamatan",
             filterOptions: KUDUS_KECAMATAN_OPTIONS,
+            resetFiltersOnChange: ["desa_kelurahan"],
           },
           {
             key: "desa_kelurahan",
             header: "Desa/Kelurahan",
-            filterOptions: KUDUS_DESA_KELURAHAN_OPTIONS,
+            filterOptions: (filters) =>
+              getDesaKelurahanOptions(filters.kecamatan),
+            disabledUntilFilter: "kecamatan",
+            disabledPlaceholder: "Pilih Kecamatan dulu",
+            placeholder: "Semua Desa/Kelurahan",
           },
           { key: "jenis_buku", header: "Jenis Buku" },
           { key: "luas_tanah", header: "Luas Tanah" },

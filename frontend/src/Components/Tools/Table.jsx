@@ -32,10 +32,19 @@ const Table = ({
 
   // Handle column filtering
   const handleColumnFilter = (columnKey, value) => {
-    setColumnFilters((prev) => ({
-      ...prev,
-      [columnKey]: value,
-    }));
+    setColumnFilters((prev) => {
+      const next = {
+        ...prev,
+        [columnKey]: value,
+      };
+      const column = columnByKey.get(columnKey);
+
+      column?.resetFiltersOnChange?.forEach((key) => {
+        next[key] = "";
+      });
+
+      return next;
+    });
     setCurrentPage(1); // Reset to first page when filtering
   };
 
@@ -73,7 +82,7 @@ const Table = ({
           const itemValue = String(item[key] ?? "");
 
           if (column?.filterOptions) {
-            return itemValue === value;
+            return itemValue.toUpperCase() === value.toUpperCase();
           }
 
           return itemValue.toLowerCase().includes(value.toLowerCase());
@@ -141,19 +150,35 @@ const Table = ({
   }, [currentPage, totalPages]);
 
   const renderColumnFilter = (column) => {
+    const filterOptions =
+      typeof column.filterOptions === "function"
+        ? column.filterOptions(columnFilters)
+        : column.filterOptions;
+    const isSelectFilterDisabled =
+      Boolean(column.filterOptions) &&
+      Boolean(column.disabledUntilFilter) &&
+      !columnFilters[column.disabledUntilFilter];
     const filterClasses =
       "px-3 py-1.5 text-xs border border-blue-100 font-normal focus:ring-2 focus:ring-blue-100 focus:outline-none focus:border-blue-300 rounded-md w-full bg-white/95 text-gray-800 placeholder-gray-400";
+    const disabledFilterClasses = isSelectFilterDisabled
+      ? " disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+      : "";
 
-    if (column.filterOptions) {
+    if (filterOptions) {
       return (
         <select
-          className={filterClasses}
+          className={`${filterClasses}${disabledFilterClasses}`}
           onChange={(e) => handleColumnFilter(column.key, e.target.value)}
           value={columnFilters[column.key] || ""}
+          disabled={isSelectFilterDisabled}
           aria-label={`Filter ${column.header}`}
         >
-          <option value="">Semua {column.header}</option>
-          {column.filterOptions.map((option) => (
+          <option value="">
+            {isSelectFilterDisabled
+              ? column.disabledPlaceholder || "Pilih filter terkait dulu"
+              : column.placeholder || `Semua ${column.header}`}
+          </option>
+          {filterOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>

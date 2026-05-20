@@ -27,9 +27,18 @@ const Form = ({
     );
   };
 
-  const handleInputChange = (e, label) => {
-    const fieldKey = labelToKey(label);
-    setFormData((prev) => ({ ...prev, [fieldKey]: e.target.value }));
+  const handleInputChange = (e, item) => {
+    const fieldKey = labelToKey(item.label);
+    const value = e.target.value;
+    setFormData((prev) => {
+      const next = { ...prev, [fieldKey]: value };
+
+      item.resetFieldsOnChange?.forEach((key) => {
+        next[key] = "";
+      });
+
+      return next;
+    });
   };
 
   const renderField = (item) => {
@@ -46,10 +55,10 @@ const Form = ({
           className={`${commonClasses}`}
           required={item.required ?? true}
           value={formData[fieldKey]}
-          onChange={(e) => handleInputChange(e, item.label)}
+          onChange={(e) => handleInputChange(e, item)}
           disabled={isDisabled}
         >
-          <option value="">Pilih {item.label}</option>
+          <option value="">{item.placeholder || `Pilih ${item.label}`}</option>
           {item.options?.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
@@ -68,7 +77,7 @@ const Form = ({
           required={item.required ?? true}
           placeholder={"Masukan " + item.label}
           value={formData[fieldKey]}
-          onChange={(e) => handleInputChange(e, item.label)}
+          onChange={(e) => handleInputChange(e, item)}
           disabled={isDisabled}
         />
       );
@@ -86,7 +95,7 @@ const Form = ({
           item.autocomplete ?? (disableAutofill ? "off" : undefined)
         }
         value={formData[fieldKey]}
-        onChange={(e) => handleInputChange(e, item.label)}
+        onChange={(e) => handleInputChange(e, item)}
         disabled={isDisabled}
       />
     );
