@@ -25,6 +25,11 @@ const KUDUS_KECAMATAN_OPTIONS = [
   { value: "DAWE", label: "DAWE" },
 ];
 
+const STATUS_OPTIONS = [
+  { value: "tersedia", label: "TERSEDIA" },
+  { value: "terpinjam", label: "TERPINJAM" },
+];
+
 const KUDUS_DESA_KELURAHAN_SOURCE = [
   { value: "Bakalankrapyak", label: "Bakalankrapyak - Kaliwungu" },
   { value: "Prambatan Kidul", label: "Prambatan Kidul - Kaliwungu" },
@@ -421,6 +426,7 @@ const BukuTanah = () => {
           {
             key: "status",
             header: "Status",
+            filterOptions: STATUS_OPTIONS,
             render: (row) => (
               <Badge color={row.status === "tersedia" ? "green" : "red"}>
                 {row.status}
