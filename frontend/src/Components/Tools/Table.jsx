@@ -25,6 +25,10 @@ const Table = ({
   const [columnFilters, setColumnFilters] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const columnByKey = useMemo(
+    () => new Map(columns.map((column) => [column.key, column])),
+    [columns]
+  );
 
   // Handle column filtering
   const handleColumnFilter = (columnKey, value) => {
@@ -64,9 +68,16 @@ const Table = ({
     // Apply column filters
     Object.entries(columnFilters).forEach(([key, value]) => {
       if (value) {
-        result = result.filter((item) =>
-          String(item[key]).toLowerCase().includes(value.toLowerCase())
-        );
+        const column = columnByKey.get(key);
+        result = result.filter((item) => {
+          const itemValue = String(item[key] ?? "");
+
+          if (column?.filterOptions) {
+            return itemValue === value;
+          }
+
+          return itemValue.toLowerCase().includes(value.toLowerCase());
+        });
       }
     });
 
@@ -92,7 +103,7 @@ const Table = ({
     }
 
     return result;
-  }, [data, columns, columnFilters, searchText, sortConfig]);
+  }, [data, columns, columnByKey, columnFilters, searchText, sortConfig]);
 
   // Pagination
   const totalPages = Math.max(
@@ -128,6 +139,39 @@ const Table = ({
       setCurrentPage(totalPages);
     }
   }, [currentPage, totalPages]);
+
+  const renderColumnFilter = (column) => {
+    const filterClasses =
+      "px-3 py-1.5 text-xs border border-blue-100 font-normal focus:ring-2 focus:ring-blue-100 focus:outline-none focus:border-blue-300 rounded-md w-full bg-white/95 text-gray-800 placeholder-gray-400";
+
+    if (column.filterOptions) {
+      return (
+        <select
+          className={filterClasses}
+          onChange={(e) => handleColumnFilter(column.key, e.target.value)}
+          value={columnFilters[column.key] || ""}
+          aria-label={`Filter ${column.header}`}
+        >
+          <option value="">Semua {column.header}</option>
+          {column.filterOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+      );
+    }
+
+    return (
+      <input
+        type="text"
+        placeholder={`Filter ${column.header}...`}
+        className={filterClasses}
+        onChange={(e) => handleColumnFilter(column.key, e.target.value)}
+        value={columnFilters[column.key] || ""}
+      />
+    );
+  };
 
   return (
     <div className="w-full p-3 md:p-5">
@@ -195,15 +239,7 @@ const Table = ({
                           <CaretDown size={14} weight="bold" className="text-blue-600" />
                         ))}
                     </div>
-                    <input
-                      type="text"
-                      placeholder={`Filter ${column.header}...`}
-                      className="px-3 py-1.5 text-xs border border-blue-100 font-normal focus:ring-2 focus:ring-blue-100 focus:outline-none focus:border-blue-300 rounded-md w-full bg-white/95 text-gray-800 placeholder-gray-400"
-                      onChange={(e) =>
-                        handleColumnFilter(column.key, e.target.value)
-                      }
-                      value={columnFilters[column.key] || ""}
-                    />
+                    {renderColumnFilter(column)}
                   </div>
                 </th>
               ))}
