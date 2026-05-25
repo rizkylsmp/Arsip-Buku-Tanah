@@ -65,7 +65,10 @@ const Peminjaman = () => {
     idPetugas: "",
     namaPetugas: "",
     kecamatan: "",
+    desaKelurahan: "",
     idBuku: "",
+    jenisHak: "",
+    namaPemilik: "",
     tanggalPinjam: "",
     keterangan: "",
   });
@@ -138,12 +141,31 @@ const Peminjaman = () => {
     }
   };
 
-  const filteredBukuTanahOptions = bukuTanahList
-    .filter((b) => normalizeUpper(b.kecamatan) === formData.kecamatan)
+  const kecamatanOptions = KUDUS_KECAMATAN_OPTIONS.filter((option) =>
+    bukuTanahList.some(
+      (b) => normalizeUpper(b.kecamatan) === option.value
+    )
+  );
+  const desaKelurahanOptions = [
+    ...new Set(
+      bukuTanahList
+        .filter((b) => normalizeUpper(b.kecamatan) === formData.kecamatan)
+        .map((b) => normalizeUpper(b.desa_kelurahan))
+        .filter(Boolean)
+    ),
+  ].map((desa) => ({ value: desa, label: desa }));
+  const nomorHakOptions = bukuTanahList
+    .filter(
+      (b) =>
+        normalizeUpper(b.kecamatan) === formData.kecamatan &&
+        normalizeUpper(b.desa_kelurahan) === formData.desaKelurahan
+    )
     .map((b) => ({
       value: b.id_buku,
-      label: `${b.nomor_hak} - ${b.nama_pemilik}`,
+      label: b.nomor_hak,
     }));
+  const getSelectedBuku = (idBuku) =>
+    bukuTanahList.find((b) => String(b.id_buku) === String(idBuku));
 
   const fields = [
     {
@@ -154,18 +176,44 @@ const Peminjaman = () => {
     {
       label: "Kecamatan",
       type: "select",
-      options: KUDUS_KECAMATAN_OPTIONS,
-      resetFieldsOnChange: ["idBuku"],
+      options: kecamatanOptions,
+      resetFieldsOnChange: [
+        "desaKelurahan",
+        "idBuku",
+        "jenisHak",
+        "namaPemilik",
+      ],
     },
     {
-      label: "Id Buku",
+      label: "Desa/Kelurahan",
       type: "select",
-      options: filteredBukuTanahOptions,
+      options: desaKelurahanOptions,
       disabled: !formData.kecamatan,
+      resetFieldsOnChange: ["idBuku", "jenisHak", "namaPemilik"],
       placeholder: formData.kecamatan
-        ? "Pilih Id Buku"
+        ? "Pilih Desa/Kelurahan"
         : "Pilih Kecamatan terlebih dahulu",
     },
+    {
+      label: "Nomor Hak",
+      type: "select",
+      fieldKey: "idBuku",
+      options: nomorHakOptions,
+      disabled: !formData.desaKelurahan,
+      placeholder: formData.desaKelurahan
+        ? "Pilih Nomor Hak"
+        : "Pilih Desa/Kelurahan terlebih dahulu",
+      onValueChange: (value) => {
+        const selectedBuku = getSelectedBuku(value);
+
+        return {
+          jenisHak: normalizeUpper(selectedBuku?.jenis_buku),
+          namaPemilik: selectedBuku?.nama_pemilik || "",
+        };
+      },
+    },
+    { label: "Jenis Hak", type: "text", disabled: true },
+    { label: "Nama Pemilik", type: "text", disabled: true },
     { label: "Tanggal Pinjam", type: "date" },
     {
       label: "Keterangan",
@@ -235,7 +283,10 @@ const Peminjaman = () => {
       idPetugas: loggedInPetugas?.id || "",
       namaPetugas: loggedInPetugas?.nama || "",
       kecamatan: "",
+      desaKelurahan: "",
       idBuku: "",
+      jenisHak: "",
+      namaPemilik: "",
       tanggalPinjam: "",
       keterangan: "",
     });

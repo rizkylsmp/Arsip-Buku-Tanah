@@ -27,8 +27,10 @@ const Form = ({
     );
   };
 
+  const getFieldKey = (item) => item.fieldKey || labelToKey(item.label);
+
   const handleInputChange = (e, item) => {
-    const fieldKey = labelToKey(item.label);
+    const fieldKey = getFieldKey(item);
     const value = e.target.value;
     setFormData((prev) => {
       const next = { ...prev, [fieldKey]: value };
@@ -37,12 +39,12 @@ const Form = ({
         next[key] = "";
       });
 
-      return next;
+      return { ...next, ...(item.onValueChange?.(value, next, prev) || {}) };
     });
   };
 
   const renderField = (item) => {
-    const fieldKey = labelToKey(item.label);
+    const fieldKey = getFieldKey(item);
     const isDisabled = disabledFields.includes(fieldKey) || item.disabled;
     const commonClasses =
       "box-border inline-flex w-full appearance-none rounded-lg px-3 py-2 text-sm leading-none border-2 border-slate-200 outline-none bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 hover:border-slate-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-50 shadow-sm";
@@ -54,7 +56,7 @@ const Form = ({
           id={fieldKey}
           className={`${commonClasses}`}
           required={item.required ?? true}
-          value={formData[fieldKey]}
+          value={formData[fieldKey] ?? ""}
           onChange={(e) => handleInputChange(e, item)}
           disabled={isDisabled}
         >
@@ -76,7 +78,7 @@ const Form = ({
           className={`${commonClasses} min-h-24 resize-y`}
           required={item.required ?? true}
           placeholder={"Masukan " + item.label}
-          value={formData[fieldKey]}
+          value={formData[fieldKey] ?? ""}
           onChange={(e) => handleInputChange(e, item)}
           disabled={isDisabled}
         />
@@ -94,7 +96,7 @@ const Form = ({
         autoComplete={
           item.autocomplete ?? (disableAutofill ? "off" : undefined)
         }
-        value={formData[fieldKey]}
+        value={formData[fieldKey] ?? ""}
         onChange={(e) => handleInputChange(e, item)}
         disabled={isDisabled}
       />
