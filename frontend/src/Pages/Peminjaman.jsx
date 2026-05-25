@@ -13,6 +13,18 @@ import { getAvailableBukuTanah } from "../api/bukuTanahApi";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
 
+const KUDUS_KECAMATAN_OPTIONS = [
+  { value: "KALIWUNGU", label: "KALIWUNGU" },
+  { value: "KOTA KUDUS", label: "KOTA KUDUS" },
+  { value: "JATI", label: "JATI" },
+  { value: "UNDAAN", label: "UNDAAN" },
+  { value: "MEJOBO", label: "MEJOBO" },
+  { value: "JEKULO", label: "JEKULO" },
+  { value: "BAE", label: "BAE" },
+  { value: "GEBOG", label: "GEBOG" },
+  { value: "DAWE", label: "DAWE" },
+];
+
 const KETERANGAN_PEMINJAMAN_OPTIONS = [
   {
     value: "Penanganan pengaduan, sengketa, perkara",
@@ -37,6 +49,8 @@ const KETERANGAN_PEMINJAMAN_OPTIONS = [
   { value: "Lain-lain", label: "Lain-lain" },
 ];
 
+const normalizeUpper = (value) => (value || "").toUpperCase();
+
 const Peminjaman = () => {
   const [isAddOpen, setIsAddOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -50,6 +64,7 @@ const Peminjaman = () => {
   const [formData, setFormData] = React.useState({
     idPetugas: "",
     namaPetugas: "",
+    kecamatan: "",
     idBuku: "",
     tanggalPinjam: "",
     keterangan: "",
@@ -123,6 +138,13 @@ const Peminjaman = () => {
     }
   };
 
+  const filteredBukuTanahOptions = bukuTanahList
+    .filter((b) => normalizeUpper(b.kecamatan) === formData.kecamatan)
+    .map((b) => ({
+      value: b.id_buku,
+      label: `${b.nomor_hak} - ${b.nama_pemilik}`,
+    }));
+
   const fields = [
     {
       label: "Nama Petugas",
@@ -130,12 +152,19 @@ const Peminjaman = () => {
       disabled: true,
     },
     {
+      label: "Kecamatan",
+      type: "select",
+      options: KUDUS_KECAMATAN_OPTIONS,
+      resetFieldsOnChange: ["idBuku"],
+    },
+    {
       label: "Id Buku",
       type: "select",
-      options: bukuTanahList.map((b) => ({
-        value: b.id_buku,
-        label: `${b.nomor_hak} - ${b.nama_pemilik}`,
-      })),
+      options: filteredBukuTanahOptions,
+      disabled: !formData.kecamatan,
+      placeholder: formData.kecamatan
+        ? "Pilih Id Buku"
+        : "Pilih Kecamatan terlebih dahulu",
     },
     { label: "Tanggal Pinjam", type: "date" },
     {
@@ -205,6 +234,7 @@ const Peminjaman = () => {
     setFormData({
       idPetugas: loggedInPetugas?.id || "",
       namaPetugas: loggedInPetugas?.nama || "",
+      kecamatan: "",
       idBuku: "",
       tanggalPinjam: "",
       keterangan: "",
