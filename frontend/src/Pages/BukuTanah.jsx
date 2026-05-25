@@ -30,6 +30,18 @@ const STATUS_OPTIONS = [
   { value: "terpinjam", label: "TERPINJAM" },
 ];
 
+const JENIS_HAK_OPTIONS = [
+  { value: "HAK MILIK", label: "HAK MILIK" },
+  { value: "HAK GUNA BANGUNAN", label: "HAK GUNA BANGUNAN" },
+  { value: "HAK PAKAI", label: "HAK PAKAI" },
+  { value: "HAK PENGELOLAAN", label: "HAK PENGELOLAAN" },
+  { value: "HAK WAKAF", label: "HAK WAKAF" },
+  {
+    value: "HAK MILIK SATUAN RUMAH SUSUN",
+    label: "HAK MILIK SATUAN RUMAH SUSUN",
+  },
+];
+
 const KUDUS_DESA_KELURAHAN_SOURCE = [
   { value: "Bakalankrapyak", label: "Bakalankrapyak - Kaliwungu" },
   { value: "Prambatan Kidul", label: "Prambatan Kidul - Kaliwungu" },
@@ -194,8 +206,7 @@ const BukuTanah = () => {
     namaPemilik: "",
     kecamatan: "",
     desaKelurahan: "",
-    jenisBuku: "",
-    luasTanah: "",
+    jenisHak: "",
     tanggalInput: "",
   });
 
@@ -207,11 +218,6 @@ const BukuTanah = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const [itemToDelete, setItemToDelete] = React.useState(null);
 
-  // Get user role from localStorage
-  const profile = JSON.parse(localStorage.getItem("profile") || "{}");
-  const userRole = profile?.result?.role || "pegawai";
-  const isAdmin = userRole === "admin";
-
   const handleEdit = (row) => {
     setIsEditMode(true);
     setEditingId(row.id_buku);
@@ -220,8 +226,7 @@ const BukuTanah = () => {
       namaPemilik: row.nama_pemilik || "",
       kecamatan: normalizeUpper(row.kecamatan),
       desaKelurahan: normalizeUpper(row.desa_kelurahan),
-      jenisBuku: row.jenis_buku || "",
-      luasTanah: row.luas_tanah || "",
+      jenisHak: normalizeUpper(row.jenis_buku),
       tanggalInput: row.tanggal_input ? row.tanggal_input.split("T")[0] : "",
     });
     setIsAddOpen(true);
@@ -274,8 +279,7 @@ const BukuTanah = () => {
           nama_pemilik: formData.namaPemilik,
           kecamatan: formData.kecamatan,
           desa_kelurahan: formData.desaKelurahan,
-          jenis_buku: formData.jenisBuku,
-          luas_tanah: formData.luasTanah,
+          jenis_buku: formData.jenisHak,
           tanggal_input: formData.tanggalInput,
         });
         if (response.status === 200) {
@@ -287,8 +291,7 @@ const BukuTanah = () => {
             namaPemilik: "",
             kecamatan: "",
             desaKelurahan: "",
-            jenisBuku: "",
-            luasTanah: "",
+            jenisHak: "",
             tanggalInput: "",
           });
           await fetchBukuTanah();
@@ -300,8 +303,7 @@ const BukuTanah = () => {
           nama_pemilik: formData.namaPemilik,
           kecamatan: formData.kecamatan,
           desa_kelurahan: formData.desaKelurahan,
-          jenis_buku: formData.jenisBuku,
-          luas_tanah: formData.luasTanah,
+          jenis_buku: formData.jenisHak,
           tanggal_input: formData.tanggalInput,
         });
         if (response.status === 201) {
@@ -311,8 +313,7 @@ const BukuTanah = () => {
             namaPemilik: "",
             kecamatan: "",
             desaKelurahan: "",
-            jenisBuku: "",
-            luasTanah: "",
+            jenisHak: "",
             tanggalInput: "",
           });
           await fetchBukuTanah();
@@ -327,8 +328,6 @@ const BukuTanah = () => {
   };
 
   const field = [
-    { label: "Nomor Hak", type: "text" },
-    { label: "Nama Pemilik", type: "text" },
     {
       label: "Kecamatan",
       type: "select",
@@ -344,51 +343,47 @@ const BukuTanah = () => {
         ? "Pilih Desa/Kelurahan"
         : "Pilih Kecamatan terlebih dahulu",
     },
-    { label: "Jenis Buku", type: "text" },
-    { label: "Luas Tanah", type: "text" },
+    { label: "Jenis Hak", type: "select", options: JENIS_HAK_OPTIONS },
+    { label: "Nomor Hak", type: "text" },
+    { label: "Nama Pemilik", type: "text" },
     { label: "Tanggal Input", type: "date" },
   ];
 
   return (
     <div>
       <Header title="BUKU TANAH" input>
-        {isAdmin && (
-          <Add
-            textButton="Tambah Buku Tanah"
-            title="Tambah Buku Tanah"
-            open={isAddOpen}
-            onOpenChange={(open) => {
-              if (!open) {
-                setIsEditMode(false);
-                setEditingId(null);
-                setFormData({
-                  nomorHak: "",
-                  namaPemilik: "",
-                  kecamatan: "",
-                  desaKelurahan: "",
-                  jenisBuku: "",
-                  luasTanah: "",
-                  tanggalInput: "",
-                });
-              }
-              setIsAddOpen(open);
-            }}
-          >
-            <Form
-              fields={field}
-              onSubmit={handleSubmit}
-              formData={formData}
-              setFormData={setFormData}
-              buttonText={isEditMode ? "Update" : "Simpan"}
-            />
-          </Add>
-        )}
+        <Add
+          textButton="Tambah Buku Tanah"
+          title="Tambah Buku Tanah"
+          open={isAddOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              setIsEditMode(false);
+              setEditingId(null);
+              setFormData({
+                nomorHak: "",
+                namaPemilik: "",
+                kecamatan: "",
+                desaKelurahan: "",
+                jenisHak: "",
+                tanggalInput: "",
+              });
+            }
+            setIsAddOpen(open);
+          }}
+        >
+          <Form
+            fields={field}
+            onSubmit={handleSubmit}
+            formData={formData}
+            setFormData={setFormData}
+            buttonText={isEditMode ? "Update" : "Simpan"}
+          />
+        </Add>
       </Header>
       <Table
         data={bukuTanahList}
         columns={[
-          { key: "nomor_hak", header: "Nomor Hak" },
-          { key: "nama_pemilik", header: "Nama Pemilik" },
           {
             key: "kecamatan",
             header: "Kecamatan",
@@ -404,8 +399,13 @@ const BukuTanah = () => {
             disabledPlaceholder: "Pilih Kecamatan dulu",
             placeholder: "Semua Desa/Kelurahan",
           },
-          { key: "jenis_buku", header: "Jenis Buku" },
-          { key: "luas_tanah", header: "Luas Tanah" },
+          {
+            key: "jenis_buku",
+            header: "Jenis Hak",
+            filterOptions: JENIS_HAK_OPTIONS,
+          },
+          { key: "nomor_hak", header: "Nomor Hak" },
+          { key: "nama_pemilik", header: "Nama Pemilik" },
           {
             key: "tanggal_input",
             header: "Tanggal Input",
@@ -436,8 +436,8 @@ const BukuTanah = () => {
         ]}
         rowsPerPage={10}
         loading={loading}
-        onEdit={isAdmin ? handleEdit : null}
-        onDelete={isAdmin ? handleDelete : null}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
       />
 
       {/* Delete Confirmation Dialog */}

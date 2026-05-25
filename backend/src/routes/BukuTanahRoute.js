@@ -8,7 +8,7 @@ import {
   updateBuku,
   deleteBuku,
 } from "../controllers/BukuTanahController.js";
-import { authenticate, isAdmin } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
 
 const router = express.Router();
 
@@ -18,9 +18,9 @@ router.get("/buku-tanah/borrowed", authenticate, getBorrowedBuku);
 router.get("/buku-tanah", authenticate, getAllBuku);
 router.get("/buku-tanah/:id", authenticate, getBukuById);
 
-// Admin only: create, update, delete
-router.post("/buku-tanah", authenticate, isAdmin, createBuku);
-router.patch("/buku-tanah/:id", authenticate, isAdmin, updateBuku);
-router.delete("/buku-tanah/:id", authenticate, isAdmin, deleteBuku);
+// Protected routes (both admin and pegawai can create, update, delete)
+router.post("/buku-tanah", authenticate, createBuku);
+router.patch("/buku-tanah/:id", authenticate, updateBuku);
+router.delete("/buku-tanah/:id", authenticate, deleteBuku);
 
 export default router;

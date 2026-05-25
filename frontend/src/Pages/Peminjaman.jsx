@@ -9,16 +9,38 @@ import {
   updatePeminjaman,
   deletePeminjaman,
 } from "../api/peminjamanApi";
-import { getPetugas } from "../api/petugasApi";
 import { getAvailableBukuTanah } from "../api/bukuTanahApi";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
+
+const KETERANGAN_PEMINJAMAN_OPTIONS = [
+  {
+    value: "Penanganan pengaduan, sengketa, perkara",
+    label: "Penanganan pengaduan, sengketa, perkara",
+  },
+  {
+    value: "Pemeliharaan Data (Peralihan Hak)",
+    label: "Pemeliharaan Data (Peralihan Hak)",
+  },
+  {
+    value: "Informasi Pertanahan (Pengecekan/SKPT)",
+    label: "Informasi Pertanahan (Pengecekan/SKPT)",
+  },
+  {
+    value: "Penggantian Sertipikat",
+    label: "Penggantian Sertipikat",
+  },
+  {
+    value: "Pemecahan/penggabungan/pemisahan",
+    label: "Pemecahan/penggabungan/pemisahan",
+  },
+  { value: "Lain-lain", label: "Lain-lain" },
+];
 
 const Peminjaman = () => {
   const [isAddOpen, setIsAddOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [peminjamanList, setPeminjamanList] = React.useState([]);
-  const [petugasList, setPetugasList] = React.useState([]);
   const [bukuTanahList, setBukuTanahList] = React.useState([]);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [editingId, setEditingId] = React.useState(null);
@@ -59,7 +81,6 @@ const Peminjaman = () => {
     }
 
     fetchPeminjaman();
-    fetchPetugas();
     fetchBukuTanah();
   }, []);
 
@@ -90,17 +111,6 @@ const Peminjaman = () => {
     }
   };
 
-  const fetchPetugas = async () => {
-    try {
-      const response = await getPetugas();
-      if (response.data && response.data.data) {
-        setPetugasList(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching petugas:", error);
-    }
-  };
-
   const fetchBukuTanah = async () => {
     try {
       // Fetch only available books (not borrowed)
@@ -128,7 +138,11 @@ const Peminjaman = () => {
       })),
     },
     { label: "Tanggal Pinjam", type: "date" },
-    { label: "Keterangan", type: "textarea" },
+    {
+      label: "Keterangan",
+      type: "select",
+      options: KETERANGAN_PEMINJAMAN_OPTIONS,
+    },
   ];
 
   const columns = [
@@ -137,7 +151,11 @@ const Peminjaman = () => {
     { key: "kode_buku", header: "Nomor Hak" },
     { key: "nama_pemilik", header: "Nama Pemilik" },
     { key: "tanggal_pinjam", header: "Tanggal Pinjam" },
-    { key: "keterangan", header: "Keterangan" },
+    {
+      key: "keterangan",
+      header: "Keterangan",
+      filterOptions: KETERANGAN_PEMINJAMAN_OPTIONS,
+    },
   ];
 
   const handleSubmit = async (event) => {
