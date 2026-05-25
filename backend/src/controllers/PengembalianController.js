@@ -49,7 +49,14 @@ export const getAllPengembalian = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
         {
           model: Peminjaman,
@@ -81,7 +88,14 @@ export const getPengembalianById = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
         {
           model: Peminjaman,
@@ -170,7 +184,14 @@ export const createPengembalianController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
         {
           model: Peminjaman,
@@ -224,7 +245,14 @@ export const updatePengembalianController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
       ],
     });

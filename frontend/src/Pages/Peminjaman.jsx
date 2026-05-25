@@ -111,7 +111,10 @@ const Peminjaman = () => {
           return {
             id_pinjam: item.id_pinjam,
             kode_peminjaman: item.kode_peminjaman,
-            nama_peminjam: item.Petugas?.nama,
+            nama_petugas: item.Petugas?.nama,
+            kecamatan: normalizeUpper(item.BukuTanah?.kecamatan),
+            desa_kelurahan: normalizeUpper(item.BukuTanah?.desa_kelurahan),
+            jenis_hak: normalizeUpper(item.BukuTanah?.jenis_buku),
             kode_buku: item.BukuTanah?.nomor_hak,
             nama_pemilik: item.BukuTanah?.nama_pemilik,
             tanggal_pinjam: item.tanggal_pinjam,
@@ -224,7 +227,10 @@ const Peminjaman = () => {
 
   const columns = [
     { key: "kode_peminjaman", header: "Kode Peminjaman" },
-    { key: "nama_peminjam", header: "Nama Peminjam" },
+    { key: "nama_petugas", header: "Nama Petugas" },
+    { key: "kecamatan", header: "Kecamatan" },
+    { key: "desa_kelurahan", header: "Desa/Kelurahan" },
+    { key: "jenis_hak", header: "Jenis Hak" },
     { key: "kode_buku", header: "Nomor Hak" },
     { key: "nama_pemilik", header: "Nama Pemilik" },
     { key: "tanggal_pinjam", header: "Tanggal Pinjam" },

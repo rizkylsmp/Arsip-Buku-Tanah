@@ -42,7 +42,14 @@ export const getAllPeminjaman = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
       ],
       order: [["createdAt", "DESC"]],
@@ -69,7 +76,14 @@ export const getPeminjamanById = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
       ],
     });
@@ -143,7 +157,14 @@ export const createPeminjamanController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
       ],
     });
@@ -211,7 +232,14 @@ export const updatePeminjamanController = async (req, res) => {
         },
         {
           model: BukuTanah,
-          attributes: ["id_buku", "nomor_hak", "nama_pemilik", "jenis_buku"],
+          attributes: [
+            "id_buku",
+            "nomor_hak",
+            "nama_pemilik",
+            "kecamatan",
+            "desa_kelurahan",
+            "jenis_buku",
+          ],
         },
       ],
     });

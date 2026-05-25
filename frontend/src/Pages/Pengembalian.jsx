@@ -9,16 +9,28 @@ import {
   updatePengembalian,
   deletePengembalian,
 } from "../api/pengembalianApi";
-import { getPetugas } from "../api/petugasApi";
 import { getBorrowedBukuTanah } from "../api/bukuTanahApi";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
+
+const KUDUS_KECAMATAN_OPTIONS = [
+  { value: "KALIWUNGU", label: "KALIWUNGU" },
+  { value: "KOTA KUDUS", label: "KOTA KUDUS" },
+  { value: "JATI", label: "JATI" },
+  { value: "UNDAAN", label: "UNDAAN" },
+  { value: "MEJOBO", label: "MEJOBO" },
+  { value: "JEKULO", label: "JEKULO" },
+  { value: "BAE", label: "BAE" },
+  { value: "GEBOG", label: "GEBOG" },
+  { value: "DAWE", label: "DAWE" },
+];
+
+const normalizeUpper = (value) => (value || "").toUpperCase();
 
 const Pengembalian = () => {
   const [isAddOpen, setIsAddOpen] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [pengembalianList, setPengembalianList] = React.useState([]);
-  const [petugasList, setPetugasList] = React.useState([]);
   const [bukuTanahList, setBukuTanahList] = React.useState([]);
   const [isEditMode, setIsEditMode] = React.useState(false);
   const [editingId, setEditingId] = React.useState(null);
@@ -28,7 +40,11 @@ const Pengembalian = () => {
   const [formData, setFormData] = React.useState({
     idPetugas: "",
     namaPetugas: "",
+    kecamatan: "",
+    desaKelurahan: "",
     idBuku: "",
+    jenisHak: "",
+    namaPemilik: "",
     tanggalKembali: "",
     keterangan: "",
   });
@@ -59,7 +75,6 @@ const Pengembalian = () => {
     }
 
     fetchPengembalian();
-    fetchPetugas();
     fetchBukuTanah();
   }, []);
 
@@ -71,7 +86,10 @@ const Pengembalian = () => {
         const formattedData = response.data.data.map((item) => ({
           id_kembali: item.id_kembali,
           kode_pengembalian: item.kode_pengembalian,
-          nama_pengembalian: item.Petugas?.nama,
+          nama_petugas: item.Petugas?.nama,
+          kecamatan: normalizeUpper(item.BukuTanah?.kecamatan),
+          desa_kelurahan: normalizeUpper(item.BukuTanah?.desa_kelurahan),
+          jenis_hak: normalizeUpper(item.BukuTanah?.jenis_buku),
           kode_buku: item.BukuTanah?.nomor_hak,
           nama_pemilik: item.BukuTanah?.nama_pemilik,
           tanggal_kembali: item.tanggal_kembali,
@@ -88,17 +106,6 @@ const Pengembalian = () => {
     }
   };
 
-  const fetchPetugas = async () => {
-    try {
-      const response = await getPetugas();
-      if (response.data && response.data.data) {
-        setPetugasList(response.data.data);
-      }
-    } catch (error) {
-      console.error("Error fetching petugas:", error);
-    }
-  };
-
   const fetchBukuTanah = async () => {
     try {
       // Fetch only borrowed books (terpinjam) for pengembalian
@@ -111,6 +118,30 @@ const Pengembalian = () => {
     }
   };
 
+  const kecamatanOptions = KUDUS_KECAMATAN_OPTIONS.filter((option) =>
+    bukuTanahList.some((b) => normalizeUpper(b.kecamatan) === option.value)
+  );
+  const desaKelurahanOptions = [
+    ...new Set(
+      bukuTanahList
+        .filter((b) => normalizeUpper(b.kecamatan) === formData.kecamatan)
+        .map((b) => normalizeUpper(b.desa_kelurahan))
+        .filter(Boolean)
+    ),
+  ].map((desa) => ({ value: desa, label: desa }));
+  const nomorHakOptions = bukuTanahList
+    .filter(
+      (b) =>
+        normalizeUpper(b.kecamatan) === formData.kecamatan &&
+        normalizeUpper(b.desa_kelurahan) === formData.desaKelurahan
+    )
+    .map((b) => ({
+      value: b.id_buku,
+      label: b.nomor_hak,
+    }));
+  const getSelectedBuku = (idBuku) =>
+    bukuTanahList.find((b) => String(b.id_buku) === String(idBuku));
+
   const fields = [
     {
       label: "Nama Petugas",
@@ -118,20 +149,56 @@ const Pengembalian = () => {
       disabled: true,
     },
     {
-      label: "Id Buku",
+      label: "Kecamatan",
       type: "select",
-      options: bukuTanahList.map((b) => ({
-        value: b.id_buku,
-        label: `${b.nomor_hak} - ${b.nama_pemilik}`,
-      })),
+      options: kecamatanOptions,
+      resetFieldsOnChange: [
+        "desaKelurahan",
+        "idBuku",
+        "jenisHak",
+        "namaPemilik",
+      ],
     },
+    {
+      label: "Desa/Kelurahan",
+      type: "select",
+      options: desaKelurahanOptions,
+      disabled: !formData.kecamatan,
+      resetFieldsOnChange: ["idBuku", "jenisHak", "namaPemilik"],
+      placeholder: formData.kecamatan
+        ? "Pilih Desa/Kelurahan"
+        : "Pilih Kecamatan terlebih dahulu",
+    },
+    {
+      label: "Nomor Hak",
+      type: "select",
+      fieldKey: "idBuku",
+      options: nomorHakOptions,
+      disabled: !formData.desaKelurahan,
+      placeholder: formData.desaKelurahan
+        ? "Pilih Nomor Hak"
+        : "Pilih Desa/Kelurahan terlebih dahulu",
+      onValueChange: (value) => {
+        const selectedBuku = getSelectedBuku(value);
+
+        return {
+          jenisHak: normalizeUpper(selectedBuku?.jenis_buku),
+          namaPemilik: selectedBuku?.nama_pemilik || "",
+        };
+      },
+    },
+    { label: "Jenis Hak", type: "text", disabled: true },
+    { label: "Nama Pemilik", type: "text", disabled: true },
     { label: "Tanggal Kembali", type: "date" },
     { label: "Keterangan", type: "textarea" },
   ];
 
   const columns = [
     { key: "kode_pengembalian", header: "Kode Pengembalian" },
-    { key: "nama_pengembalian", header: "Nama Pengembali" },
+    { key: "nama_petugas", header: "Nama Petugas" },
+    { key: "kecamatan", header: "Kecamatan" },
+    { key: "desa_kelurahan", header: "Desa/Kelurahan" },
+    { key: "jenis_hak", header: "Jenis Hak" },
     { key: "kode_buku", header: "Nomor Hak" },
     { key: "nama_pemilik", header: "Nama Pemilik" },
     { key: "tanggal_kembali", header: "Tanggal Kembali" },
@@ -184,7 +251,11 @@ const Pengembalian = () => {
     setFormData({
       idPetugas: loggedInPetugas?.id || "",
       namaPetugas: loggedInPetugas?.nama || "",
+      kecamatan: "",
+      desaKelurahan: "",
       idBuku: "",
+      jenisHak: "",
+      namaPemilik: "",
       tanggalKembali: "",
       keterangan: "",
     });
