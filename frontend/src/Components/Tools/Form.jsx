@@ -9,6 +9,8 @@ const Form = ({
   disabledFields = [],
   buttonText = "Simpan",
 }) => {
+  const [activeComboboxKey, setActiveComboboxKey] = React.useState(null);
+
   const labelToKey = (label) => {
     const parts = label
       .toLowerCase()
@@ -29,6 +31,8 @@ const Form = ({
 
   const getFieldKey = (item) => item.fieldKey || labelToKey(item.label);
 
+  const getOptionLabel = (option) => String(option.label ?? option.value);
+
   const handleInputChange = (e, item) => {
     const fieldKey = getFieldKey(item);
     const value = e.target.value;
@@ -41,6 +45,38 @@ const Form = ({
 
       return { ...next, ...(item.onValueChange?.(value, next, prev) || {}) };
     });
+  };
+
+  const updateComboboxValue = (item, typedValue, selectedOption) => {
+    const fieldKey = getFieldKey(item);
+    const displayKey = item.displayKey || `${fieldKey}Label`;
+
+    setFormData((prev) => {
+      const next = {
+        ...prev,
+        [displayKey]: typedValue,
+        [fieldKey]: selectedOption?.value || "",
+      };
+
+      item.resetFieldsOnChange?.forEach((key) => {
+        next[key] = "";
+      });
+
+      return {
+        ...next,
+        ...(item.onValueChange?.(selectedOption?.value || "", next, prev) ||
+          {}),
+      };
+    });
+  };
+
+  const handleComboboxChange = (e, item) => {
+    const typedValue = e.target.value;
+    const selectedOption = item.options?.find(
+      (opt) => getOptionLabel(opt).toLowerCase() === typedValue.toLowerCase()
+    );
+
+    updateComboboxValue(item, typedValue, selectedOption);
   };
 
   const renderField = (item) => {
@@ -67,6 +103,87 @@ const Form = ({
             </option>
           ))}
         </select>
+      );
+    }
+
+    if (item.type === "combobox") {
+      const displayKey = item.displayKey || `${fieldKey}Label`;
+      const selectedOption = item.options?.find(
+        (opt) => String(opt.value) === String(formData[fieldKey] ?? "")
+      );
+      const inputValue =
+        formData[displayKey] ?? (selectedOption ? getOptionLabel(selectedOption) : "");
+      const filteredOptions = (item.options || [])
+        .filter((opt) =>
+          getOptionLabel(opt).toLowerCase().includes(inputValue.toLowerCase())
+        )
+        .slice(0, item.maxVisibleOptions || 10);
+      const isComboboxOpen = activeComboboxKey === displayKey && !isDisabled;
+      const chooseOption = (option) => {
+        updateComboboxValue(item, getOptionLabel(option), option);
+        setActiveComboboxKey(null);
+      };
+
+      return (
+        <div className="relative w-full">
+          <input
+            name={displayKey}
+            id={displayKey}
+            className={`${commonClasses} pr-9`}
+            type="text"
+            required={item.required ?? true}
+            placeholder={item.placeholder || `Pilih ${item.label}`}
+            autoComplete="off"
+            value={inputValue}
+            onFocus={() => setActiveComboboxKey(displayKey)}
+            onChange={(e) => {
+              setActiveComboboxKey(displayKey);
+              handleComboboxChange(e, item);
+            }}
+            onBlur={() => setActiveComboboxKey(null)}
+            disabled={isDisabled}
+          />
+          <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400">
+            v
+          </span>
+          {isComboboxOpen && (
+            <div className="absolute z-[200] mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-blue-100 bg-white py-1 shadow-xl ring-1 ring-black/5">
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((opt) => {
+                  const isSelected =
+                    String(opt.value) === String(formData[fieldKey] ?? "");
+
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      className={`flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm transition-colors ${
+                        isSelected
+                          ? "bg-blue-50 font-semibold text-blue-700"
+                          : "text-slate-700 hover:bg-slate-50"
+                      }`}
+                      onMouseDown={(event) => {
+                        event.preventDefault();
+                        chooseOption(opt);
+                      }}
+                    >
+                      <span className="truncate">{getOptionLabel(opt)}</span>
+                      {isSelected && (
+                        <span className="shrink-0 text-xs text-blue-600">
+                          Dipilih
+                        </span>
+                      )}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="px-3 py-2 text-sm text-slate-500">
+                  Tidak ada data
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       );
     }
 

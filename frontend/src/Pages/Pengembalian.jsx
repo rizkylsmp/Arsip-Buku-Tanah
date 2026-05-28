@@ -43,6 +43,7 @@ const Pengembalian = () => {
     kecamatan: "",
     desaKelurahan: "",
     idBuku: "",
+    nomorHak: "",
     jenisHak: "",
     namaPemilik: "",
     tanggalKembali: "",
@@ -155,6 +156,7 @@ const Pengembalian = () => {
       resetFieldsOnChange: [
         "desaKelurahan",
         "idBuku",
+        "nomorHak",
         "jenisHak",
         "namaPemilik",
       ],
@@ -164,15 +166,16 @@ const Pengembalian = () => {
       type: "select",
       options: desaKelurahanOptions,
       disabled: !formData.kecamatan,
-      resetFieldsOnChange: ["idBuku", "jenisHak", "namaPemilik"],
+      resetFieldsOnChange: ["idBuku", "nomorHak", "jenisHak", "namaPemilik"],
       placeholder: formData.kecamatan
         ? "Pilih Desa/Kelurahan"
         : "Pilih Kecamatan terlebih dahulu",
     },
     {
       label: "Nomor Hak",
-      type: "select",
+      type: "combobox",
       fieldKey: "idBuku",
+      displayKey: "nomorHak",
       options: nomorHakOptions,
       disabled: !formData.desaKelurahan,
       placeholder: formData.desaKelurahan
@@ -254,6 +257,7 @@ const Pengembalian = () => {
       kecamatan: "",
       desaKelurahan: "",
       idBuku: "",
+      nomorHak: "",
       jenisHak: "",
       namaPemilik: "",
       tanggalKembali: "",
