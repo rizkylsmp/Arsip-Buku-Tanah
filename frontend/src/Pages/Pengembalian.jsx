@@ -44,6 +44,7 @@ const Pengembalian = () => {
     desaKelurahan: "",
     idBuku: "",
     nomorHak: "",
+    isManualBuku: false,
     jenisHak: "",
     namaPemilik: "",
     tanggalKembali: "",
@@ -157,6 +158,7 @@ const Pengembalian = () => {
         "desaKelurahan",
         "idBuku",
         "nomorHak",
+        "isManualBuku",
         "jenisHak",
         "namaPemilik",
       ],
@@ -166,7 +168,13 @@ const Pengembalian = () => {
       type: "select",
       options: desaKelurahanOptions,
       disabled: !formData.kecamatan,
-      resetFieldsOnChange: ["idBuku", "nomorHak", "jenisHak", "namaPemilik"],
+      resetFieldsOnChange: [
+        "idBuku",
+        "nomorHak",
+        "isManualBuku",
+        "jenisHak",
+        "namaPemilik",
+      ],
       placeholder: formData.kecamatan
         ? "Pilih Desa/Kelurahan"
         : "Pilih Kecamatan terlebih dahulu",
@@ -181,17 +189,18 @@ const Pengembalian = () => {
       placeholder: formData.desaKelurahan
         ? "Pilih Nomor Hak"
         : "Pilih Desa/Kelurahan terlebih dahulu",
-      onValueChange: (value) => {
+      onValueChange: (value, _next, _prev, typedValue) => {
         const selectedBuku = getSelectedBuku(value);
 
         return {
+          isManualBuku: !selectedBuku && Boolean(typedValue),
           jenisHak: normalizeUpper(selectedBuku?.jenis_buku),
           namaPemilik: selectedBuku?.nama_pemilik || "",
         };
       },
     },
-    { label: "Jenis Hak", type: "text", disabled: true },
-    { label: "Nama Pemilik", type: "text", disabled: true },
+    { label: "Jenis Hak", type: "text", disabled: !formData.isManualBuku },
+    { label: "Nama Pemilik", type: "text", disabled: !formData.isManualBuku },
     { label: "Tanggal Kembali", type: "date" },
     { label: "Keterangan", type: "textarea" },
   ];
@@ -258,6 +267,7 @@ const Pengembalian = () => {
       desaKelurahan: "",
       idBuku: "",
       nomorHak: "",
+      isManualBuku: false,
       jenisHak: "",
       namaPemilik: "",
       tanggalKembali: "",

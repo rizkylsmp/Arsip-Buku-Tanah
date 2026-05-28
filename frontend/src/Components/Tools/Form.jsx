@@ -64,8 +64,12 @@ const Form = ({
 
       return {
         ...next,
-        ...(item.onValueChange?.(selectedOption?.value || "", next, prev) ||
-          {}),
+        ...(item.onValueChange?.(
+          selectedOption?.value || "",
+          next,
+          prev,
+          typedValue
+        ) || {}),
       };
     });
   };
