@@ -25,6 +25,18 @@ const KUDUS_KECAMATAN_OPTIONS = [
   { value: "DAWE", label: "DAWE" },
 ];
 
+const JENIS_HAK_OPTIONS = [
+  { value: "HAK MILIK", label: "HAK MILIK" },
+  { value: "HAK GUNA BANGUNAN", label: "HAK GUNA BANGUNAN" },
+  { value: "HAK PAKAI", label: "HAK PAKAI" },
+  { value: "HAK PENGELOLAAN", label: "HAK PENGELOLAAN" },
+  { value: "HAK WAKAF", label: "HAK WAKAF" },
+  {
+    value: "HAK MILIK SATUAN RUMAH SUSUN",
+    label: "HAK MILIK SATUAN RUMAH SUSUN",
+  },
+];
+
 const normalizeUpper = (value) => (value || "").toUpperCase();
 
 const Pengembalian = () => {
@@ -199,7 +211,12 @@ const Pengembalian = () => {
         };
       },
     },
-    { label: "Jenis Hak", type: "text", disabled: !formData.isManualBuku },
+    {
+      label: "Jenis Hak",
+      type: "select",
+      options: JENIS_HAK_OPTIONS,
+      disabled: !formData.isManualBuku,
+    },
     { label: "Nama Pemilik", type: "text", disabled: !formData.isManualBuku },
     { label: "Tanggal Kembali", type: "date" },
     { label: "Keterangan", type: "textarea" },
@@ -220,6 +237,13 @@ const Pengembalian = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      if (formData.isManualBuku) {
+        alert(
+          "Nomor Hak manual tidak dapat langsung dikembalikan karena belum memiliki data peminjaman aktif."
+        );
+        return;
+      }
+
       if (isEditMode && editingId) {
         // Update mode
         const response = await updatePengembalian(editingId, {
