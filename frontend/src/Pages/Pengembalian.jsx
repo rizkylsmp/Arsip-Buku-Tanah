@@ -10,20 +10,12 @@ import {
   deletePengembalian,
 } from "../api/pengembalianApi";
 import { getBorrowedBukuTanah } from "../api/bukuTanahApi";
+import {
+  getDesaKelurahanOptions,
+  KUDUS_KECAMATAN_OPTIONS,
+} from "../data/kudusWilayah";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Cross2Icon, ExclamationTriangleIcon } from "@radix-ui/react-icons";
-
-const KUDUS_KECAMATAN_OPTIONS = [
-  { value: "KALIWUNGU", label: "KALIWUNGU" },
-  { value: "KOTA KUDUS", label: "KOTA KUDUS" },
-  { value: "JATI", label: "JATI" },
-  { value: "UNDAAN", label: "UNDAAN" },
-  { value: "MEJOBO", label: "MEJOBO" },
-  { value: "JEKULO", label: "JEKULO" },
-  { value: "BAE", label: "BAE" },
-  { value: "GEBOG", label: "GEBOG" },
-  { value: "DAWE", label: "DAWE" },
-];
 
 const JENIS_HAK_OPTIONS = [
   { value: "HAK MILIK", label: "HAK MILIK" },
@@ -132,17 +124,7 @@ const Pengembalian = () => {
     }
   };
 
-  const kecamatanOptions = KUDUS_KECAMATAN_OPTIONS.filter((option) =>
-    bukuTanahList.some((b) => normalizeUpper(b.kecamatan) === option.value)
-  );
-  const desaKelurahanOptions = [
-    ...new Set(
-      bukuTanahList
-        .filter((b) => normalizeUpper(b.kecamatan) === formData.kecamatan)
-        .map((b) => normalizeUpper(b.desa_kelurahan))
-        .filter(Boolean)
-    ),
-  ].map((desa) => ({ value: desa, label: desa }));
+  const desaKelurahanOptions = getDesaKelurahanOptions(formData.kecamatan);
   const nomorHakOptions = bukuTanahList
     .filter(
       (b) =>
@@ -165,7 +147,7 @@ const Pengembalian = () => {
     {
       label: "Kecamatan",
       type: "select",
-      options: kecamatanOptions,
+      options: KUDUS_KECAMATAN_OPTIONS,
       resetFieldsOnChange: [
         "desaKelurahan",
         "idBuku",
@@ -201,6 +183,7 @@ const Pengembalian = () => {
       placeholder: formData.desaKelurahan
         ? "Pilih Nomor Hak"
         : "Pilih Desa/Kelurahan terlebih dahulu",
+      emptyText: "Gunakan nomor manual",
       onValueChange: (value, _next, _prev, typedValue) => {
         const selectedBuku = getSelectedBuku(value);
 

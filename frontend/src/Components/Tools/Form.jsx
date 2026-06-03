@@ -182,7 +182,7 @@ const Form = ({
                 })
               ) : (
                 <div className="px-3 py-2 text-sm text-slate-500">
-                  Tidak ada data
+                  {item.emptyText || "Tidak ada data"}
                 </div>
               )}
             </div>
